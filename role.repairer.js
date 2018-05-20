@@ -9,28 +9,41 @@
 
 var roleRepairer = {
 
+	repairThresholds: {
+		0: 500,
+		1: 1000,
+		2: 5000,
+		3: 25000,
+		4: 100000,
+		5: 1000000,
+		6: 10000000,
+		7: 50000000,
+		8: 100000000
+	},
+
     /** @param {Creep} creep **/
     run: function(creep) {
+		var target = this.getRepairTarget(creep);
+		if (!target) {
+			creep.memory.repairing = false
+			return false;
+		}
 
         if(creep.memory.repairing && creep.carry.energy == 0) {
             creep.memory.repairing = false;
             creep.say('🔄 harvest');
         }
+
         if(!creep.memory.repairing && creep.carry.energy == creep.carryCapacity) {
             creep.memory.repairing = true;
             creep.say('🚧 repair');
         }
 
         if(creep.memory.repairing) {
-            var target = this.getRepairTarget(creep);
-            if(target) {
-                this.repair(creep, target);
-            } else {
-                return false;
-            }
+			this.repair(creep, target);
         }
         else {
-            this.gatherEnergy(creep);
+            creep.gatherEnergy();
         }
         
         return true;
@@ -47,27 +60,30 @@ var roleRepairer = {
     },
     
     /** @param {Creep} creep **/
-    gatherEnergy: function(creep) {
-        var sources = creep.room.find(FIND_SOURCES);
-        
-        if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
-        }
-    },
-
-    /** @param {Creep} creep **/
     getRepairTarget: function(creep) {
-        return creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: object => object.hits < object.hitsMax});
-        /*
+        //return creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: object => object.hits < object.hitsMax});
+
         const targets = creep.room.find(FIND_STRUCTURES, {
-            filter: object => object.hits < object.hitsMax
+            filter: object => object.hits < this.getRepairThreshold(creep, object)
         });
         
-        targets.sort((a,b) => a.hits - b.hits);
+        targets.sort((a,b) => this.getRepairScore(creep, a) - this.getRepairScore(creep, b));
         
         return targets[0];
-        */
-    }
+    },
+
+	getRepairScore: function(creep, target) {
+		var distanceFactor = 100;
+		return target.hits + (distanceFactor * creep.pos.getRangeTo(target));
+	},
+
+	getRepairThreshold: function(creep, target) {
+		if (creep.memory.role == 'repairer') {
+			return target.hitsMax;
+		} else {
+			return Math.min(this.repairThresholds[creep.room.controller.level], target.hitsMax);
+		}
+	}
 };
 
 module.exports = roleRepairer;

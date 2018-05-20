@@ -4,6 +4,9 @@ var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
 var spawnController = require('spawnController');
 
+var creepExtensions = require('creepExtensions');
+creepExtensions.apply();
+
 module.exports.loop = function () {
 
     for(var name in Memory.creeps) {
@@ -34,10 +37,12 @@ module.exports.loop = function () {
         // If the creep is not engaged in it's role, try other roles in order
         engaged = engaged ||
             roleHarvester.run(creep) ||
-            roleRepairer.run(creep) ||
             roleBuilder.run(creep) ||
+            roleRepairer.run(creep) ||
             roleUpgrader.run(creep);
 
-        console.log(creep.name + ' not engaged');
+		if(!engaged) {
+			console.log(creep.name + ' not engaged');
+		}
     }
 }

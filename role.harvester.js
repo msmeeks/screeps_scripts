@@ -14,22 +14,13 @@ var roleHarvester = {
         var targets = this.getHarvestTargets(creep);
         if(targets.length > 0) {
             if(creep.carry.energy < creep.carryCapacity) {
-                this.gatherEnergy(creep);
+                creep.gatherEnergy();
             } else {
                 this.deliverEnergy(creep, targets);
             }
             return true;
         } else {
             return false;
-        }
-    },
-
-    /** @param {Creep} creep **/
-    gatherEnergy: function(creep) {
-        var sources = creep.room.find(FIND_SOURCES);
-        
-        if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sources[0], {visualizePathStyle: {stroke: '#ffaa00'}});
         }
     },
     
