@@ -61,7 +61,6 @@ var spawnController = {
     },
     
 	manageSpawns: function() {
-		console.log('manage spawns');
 		for (var spawnId in Game.spawns) {
 			this.manageSpawn(Game.spawns[spawnId]);
 		}
@@ -69,7 +68,6 @@ var spawnController = {
 
     /** @param {Spawn} spawn **/
     manageSpawn: function(spawn) {
-		console.log('managing spawn ' + spawn);
         if(spawn.spawning) {
             var spawningCreep = Game.creeps[spawn.spawning.name];
             spawn.room.visual.text(
