@@ -19,6 +19,15 @@ var spawnController = {
 			skillLevels: [
 				[WORK, CARRY, MOVE, MOVE],
 				[WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE]
+				[WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+			]
+		},
+
+		guard: {
+			skillLevels: [
+				[ATTACK, ATTACK, ATTACK, MOVE],
+				[TOUGH, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE],
+				[TOUGH, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE],
 			]
 		}
 	},
@@ -43,11 +52,24 @@ var spawnController = {
             name: 'repairer',
             minimumCount: 1,
             template: 'worker'
-        }
+        },
+		guard: {
+			name: 'guard',
+			minimumCount: function(spawn) {return spawn.room.memory.guardPositions.length},
+			template: 'guard'
+		}
     },
     
+	manageSpawns: function() {
+		console.log('manage spawns');
+		for (var spawnId in Game.spawns) {
+			this.manageSpawn(Game.spawns[spawnId]);
+		}
+	},
+
     /** @param {Spawn} spawn **/
-    run: function(spawn) {
+    manageSpawn: function(spawn) {
+		console.log('managing spawn ' + spawn);
         if(spawn.spawning) {
             var spawningCreep = Game.creeps[spawn.spawning.name];
             spawn.room.visual.text(
@@ -66,7 +88,12 @@ var spawnController = {
             var role = this.roles[roleKey];
             var units = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
             
-            if (units.length < role.minimumCount) {
+			var minimumCount = role.minimumCount;
+			if (typeof role.minimumCount === 'function') {
+				minimumCount = role.minimumCount(spawn);
+			}
+
+            if (units.length < minimumCount) {
                 var result = this.spawnUnit(spawn, role.name);
 				if (!result.success) {
 					console.log('Failed to spawn ' + roleKey + '. Error code: ' + result.error);

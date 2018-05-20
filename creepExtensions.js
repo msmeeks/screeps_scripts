@@ -1,3 +1,5 @@
+var screepsUtils = require('screepsUtils');
+
 /*
  * Module code goes here. Use 'module.exports' to export things:
  * module.exports.thing = 'a thing';
@@ -15,6 +17,14 @@ var creepExtensions = {
 			if(this.harvest(source) == ERR_NOT_IN_RANGE) {
 				this.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
 			}
+		};
+
+		Creep.prototype.getAssignedPos = function() {
+			return screepsUtils.roomPositionFromObject(this.memory.assignedPos);
+		};
+
+		Creep.prototype.setAssignedPos = function(pos) {
+			this.memory.assignedPos = pos;
 		};
 	}
 };

@@ -11,12 +11,12 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        var targets = this.getHarvestTargets(creep);
-        if(targets.length > 0) {
+        var target = this.getHarvestTarget(creep);
+        if(target) {
             if(creep.carry.energy < creep.carryCapacity) {
                 creep.gatherEnergy();
             } else {
-                this.deliverEnergy(creep, targets);
+                this.deliverEnergy(creep, target);
             }
             return true;
         } else {
@@ -26,24 +26,24 @@ var roleHarvester = {
     
     /**
      * @param {Creep} creep
-     * @param {[Structure]} targets
+     * @param {Structure} target
     **/
-    deliverEnergy: function(creep, targets) {
-        if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(targets[0], {visualizePathStyle: {stroke: '#ffffff'}});
+    deliverEnergy: function(creep, target) {
+        if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     },
     
     /** @param {Creep} creep **/
-    getHarvestTargets: function(creep) {
-        var targets = creep.room.find(FIND_STRUCTURES, {
+    getHarvestTarget: function(creep) {
+        var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
                     structure.energy < structure.energyCapacity;
             }
         });
             
-        return targets;
+        return target;
     }
 };
 
