@@ -1,3 +1,5 @@
+var strategyController = require('strategyController');
+
 /*
  * Module code goes here. Use 'module.exports' to export things:
  * module.exports.thing = 'a thing';
@@ -8,19 +10,6 @@
  */
 
 var roleRepairer = {
-
-	repairThresholds: {
-		0: 500,
-		1: 1000,
-		2: 5000,
-		3: 25000,
-		4: 100000,
-		5: 1000000,
-		6: 10000000,
-		7: 50000000,
-		8: 100000000
-	},
-
     /** @param {Creep} creep **/
     run: function(creep) {
 		var target = this.getRepairTarget(creep);
@@ -67,7 +56,12 @@ var roleRepairer = {
             filter: object => object.hits < this.getRepairThreshold(creep, object)
         });
         
-        targets.sort((a,b) => this.getRepairScore(creep, a) - this.getRepairScore(creep, b));
+        targets.sort((a,b) => [
+			// sort by repair priority
+			strategyController.compareRepairPriorities(a, b),
+			// then by repair score
+			(this.getRepairScore(creep, a) - this.getRepairScore(creep, b))
+		]);
         
         return targets[0];
     },
@@ -81,7 +75,7 @@ var roleRepairer = {
 		if (creep.memory.role == 'repairer') {
 			return target.hitsMax;
 		} else {
-			return Math.min(this.repairThresholds[creep.room.controller.level], target.hitsMax);
+			return strategyController.getRepairThreshold(target);
 		}
 	}
 };

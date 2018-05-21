@@ -1,9 +1,14 @@
-
 var spawnController = require('spawnController');
 var creepManager = require('creepManager');
+var towerController = require('towerController');
 
 var creepExtensions = require('creepExtensions');
 creepExtensions.apply();
+
+var structureExtensions = require('structureExtensions');
+structureExtensions.apply();
+
+allies = [];
 
 module.exports.loop = function () {
 
@@ -17,4 +22,6 @@ module.exports.loop = function () {
     spawnController.manageSpawns();
 
 	creepManager.manageCreeps();
+
+	towerController.manageTowers();
 };

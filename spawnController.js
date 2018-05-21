@@ -18,16 +18,16 @@ var spawnController = {
 		worker: {
 			skillLevels: [
 				[WORK, CARRY, MOVE, MOVE],
-				[WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE]
+				[WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
 				[WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
 			]
 		},
 
 		guard: {
 			skillLevels: [
-				[ATTACK, ATTACK, ATTACK, MOVE],
-				[TOUGH, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE],
-				[TOUGH, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE],
+				[MOVE, ATTACK, ATTACK, ATTACK],
+				[TOUGH, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
+				[TOUGH, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
 			]
 		}
 	},
@@ -70,11 +70,7 @@ var spawnController = {
     manageSpawn: function(spawn) {
         if(spawn.spawning) {
             var spawningCreep = Game.creeps[spawn.spawning.name];
-            spawn.room.visual.text(
-                '🛠️' + spawningCreep.memory.role,
-                spawn.pos.x + 1,
-                spawn.pos.y,
-                {align: 'left', opacity: 0.8});
+			spawn.say('🛠️' + spawningCreep.memory.role);
         } else {
             this.replaceUnits(spawn) || this.upgradeUnits(spawn);
         }
