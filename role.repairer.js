@@ -39,11 +39,29 @@ var roleRepairer = {
     },
 
 	setRepairingTarget: function(creep, target) {
-		creep.memory.repairing = target && target.id;
+		// FIXME: setting the repairer seems to have broken the repair role
+		/*
+		if (target) {
+			target.addRepairer(creep);
+		}
+		*/
+
+		var targetId = target && target.id;
+
+/*
+		var oldTarget = this.getRepairingTarget(creep);
+		if (oldTarget && oldTarget.id != targetId) {
+			oldTarget.removeRepairer(creep);
+		}
+		*/
+
+		creep.memory.repairing = targetId;
 	},
 
 	getRepairingTarget: function (creep) {
 		return creep.memory.repairing;
+		// FIXME
+		return creep.memory.repairing && Game.structures[creep.memory.repairing];
 	},
 
     /**
