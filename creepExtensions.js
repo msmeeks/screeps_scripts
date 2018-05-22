@@ -12,6 +12,14 @@ var screepsUtils = require('screepsUtils');
 var creepExtensions = {
 	apply: function() {
 		Creep.prototype.gatherEnergy = function() {
+			var self = this;
+			const target = this.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {filter: x => x.resourceType == RESOURCE_ENERGY && x.room.name == this.room.name});
+			if(target) {
+				if(this.pickup(target) == ERR_NOT_IN_RANGE) {
+					this.moveTo(target);
+				}
+			}
+
 			var source = this.pos.findClosestByPath(FIND_SOURCES, {filter: (src) => src.energy > 0});
 			
 			if(this.harvest(source) == ERR_NOT_IN_RANGE) {

@@ -49,7 +49,7 @@ var towerController = {
 		this.healAlliedCreepsInRange(tower, this.effectiveRange) ||
 
 		// else if my structures in max repair range need repair, repair them
-		this.repairMyStructuresInRange(tower, this.maximumRange);
+		this.repairMyStructuresInRange(tower, this.effectiveRange);
 	},
 
 	attackHostileUnitsInRange: function(tower, range) {

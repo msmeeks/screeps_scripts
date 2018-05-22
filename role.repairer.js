@@ -14,21 +14,21 @@ var roleRepairer = {
     run: function(creep) {
 		var target = this.getRepairTarget(creep);
 		if (!target) {
-			creep.memory.repairing = false
+			this.setRepairingTarget(creep, null);
 			return false;
 		}
 
-        if(creep.memory.repairing && creep.carry.energy == 0) {
-            creep.memory.repairing = false;
+        if(this.getRepairingTarget(creep) && creep.carry.energy == 0) {
+			this.setRepairingTarget(creep, null);
             creep.say('🔄 harvest');
         }
 
-        if(!creep.memory.repairing && creep.carry.energy == creep.carryCapacity) {
-            creep.memory.repairing = true;
+        if(!this.getRepairingTarget(creep) && creep.carry.energy == creep.carryCapacity) {
+			this.setRepairingTarget(creep, target);
             creep.say('🚧 repair');
         }
 
-        if(creep.memory.repairing) {
+        if(this.getRepairingTarget(creep)) {
 			this.repair(creep, target);
         }
         else {
@@ -37,6 +37,14 @@ var roleRepairer = {
         
         return true;
     },
+
+	setRepairingTarget: function(creep, target) {
+		creep.memory.repairing = target && target.id;
+	},
+
+	getRepairingTarget: function (creep) {
+		return creep.memory.repairing;
+	},
 
     /**
      * @param {Creep} creep
@@ -58,7 +66,7 @@ var roleRepairer = {
         
         targets.sort((a,b) => [
 			// sort by repair priority
-			strategyController.compareRepairPriorities(a, b),
+			//strategyController.compareRepairPriorities(a, b),
 			// then by repair score
 			(this.getRepairScore(creep, a) - this.getRepairScore(creep, b))
 		]);
@@ -68,7 +76,17 @@ var roleRepairer = {
 
 	getRepairScore: function(creep, target) {
 		var distanceFactor = 100;
-		return target.hits + (distanceFactor * creep.pos.getRangeTo(target));
+		var distanceComponent = distanceFactor * creep.pos.getRangeTo(target);
+
+		var priorityFactor = 10;
+		var priorityComponent = priorityFactor * strategyController.getRepairPriority(target);
+
+		// Creeps repair 100 hits per energy, so spend at least 25 energy on a repair job
+		// before moving to another otherwise equal job
+		var stickinessFactor = 100 * 25;
+		var stickinessComponent = stickinessFactor * this.getRepairingTarget(creep) ? 1 : 0;
+
+		return target.hits + distanceComponent + priorityComponent + stickinessComponent;;
 	},
 
 	getRepairThreshold: function(creep, target) {
