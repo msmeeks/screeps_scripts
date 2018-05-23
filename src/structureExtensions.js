@@ -10,6 +10,7 @@
 
 var structureExtensions = {
 	apply: function() {
+		// General Structure extensions
 		Structure.prototype.say = function(message) {
             this.room.visual.text(
 				message,
@@ -49,6 +50,24 @@ var structureExtensions = {
 
 			this.memory = memory;
 		};
+
+		// Container Extensions
+		Object.defineProperty(StructureContainer, 'totalStored', function() {
+			return _.sum(this.store);
+		});
+
+		Object.defineProperty(StructureContainer, 'availableCapacity', function() {
+			return this.storeCapacity - this.totalStored();
+		});
+
+		// Storage Extensions
+		Object.defineProperty(StructureStorage, 'totalStored', function() {
+			return _.sum(this.store);
+		});
+
+		Object.defineProperty(StructureStorage, 'availableCapacity', function() {
+			return this.storeCapacity - this.totalStored();
+		});
 	}
 };
 

@@ -19,7 +19,15 @@ var spawnController = {
 			skillLevels: [
 				[WORK, CARRY, MOVE, MOVE],
 				[WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
-				[WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE]
+				[WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+			]
+		},
+
+		miner: {
+			skillLevels: [
+				[WORK, CARRY, MOVE],
+				[WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
+				[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
 			]
 		},
 
@@ -53,6 +61,11 @@ var spawnController = {
             minimumCount: 1,
             template: 'worker'
         },
+		miner: {
+			name: 'miner',
+			minimumCount: function(spawn) {return spawn.room.find(FIND_SOURCES).length},
+			template: 'miner'
+		},
 		guard: {
 			name: 'guard',
 			minimumCount: function(spawn) {return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length},
