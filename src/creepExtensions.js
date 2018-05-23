@@ -26,7 +26,7 @@ var creepExtensions = {
 			}
 
 			if (!targetType || targetType == FIND_STRUCTURES) {
-				var storedTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: x => (x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_STORAGE) && x.store[RESOURCE_ENERGY] > 0});
+				var storedTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {filter: x => (x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_STORAGE) && x.store[RESOURCE_ENERGY] > 0});
 
 				if(storedTarget) {
 					if(this.withdraw(storedTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
