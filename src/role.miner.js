@@ -18,7 +18,7 @@ var roleMiner = {
 		}
 		return true;
     },
-    
+
     /**
      * @param {Creep} creep
      * @param {Structure} target
@@ -31,7 +31,7 @@ var roleMiner = {
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     },
-    
+
     /** @param {Creep} creep **/
     getDeliveryTarget: function(creep) {
         var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -40,7 +40,7 @@ var roleMiner = {
                     structure.availableCapacity > 0;
             }
         });
-            
+
         return target;
     }
 };

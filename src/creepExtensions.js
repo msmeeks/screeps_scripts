@@ -16,10 +16,21 @@ var creepExtensions = {
 			var self = this;
 
 			if (!targetType || targetType == FIND_DROPPED_RESOURCES) {
-				const target = this.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {filter: x => x.resourceType == RESOURCE_ENERGY && x.room.name == this.room.name});
-				if(target) {
-					if(this.pickup(target) == ERR_NOT_IN_RANGE) {
-						this.moveTo(target);
+				var droppedTarget = this.pos.findClosestByRange(FIND_DROPPED_RESOURCES, {filter: x => x.resourceType == RESOURCE_ENERGY && x.room.name == this.room.name});
+				if(droppedTarget) {
+					if(this.pickup(droppedTarget) == ERR_NOT_IN_RANGE) {
+						this.moveTo(droppedTarget);
+					}
+					return true;
+				}
+			}
+
+			if (!targetType || targetType == FIND_STRUCTURE) {
+				var storedTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: x => (x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_STORAGE) && x.store[RESOURCE_ENERGY] > 0});
+
+				if(storedTarget) {
+					if(this.withdraw(storedTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+						this.moveTo(storedTarget);
 					}
 					return true;
 				}
