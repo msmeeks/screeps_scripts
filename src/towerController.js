@@ -12,7 +12,7 @@ var strategyController = require('strategyController');
 var towerController = {
 	optimalRange: 5,
 	effectiveRange: 20,
-	maximumRange: Number.MAX_SAFE_INTEGER,
+	maximumRange: Infinity,
 
 	manageTowers: function() {
 		var towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
@@ -49,13 +49,16 @@ var towerController = {
 		this.healAlliedCreepsInRange(tower, this.effectiveRange) ||
 
 		// else if my structures in max repair range need repair, repair them
-		this.repairMyStructuresInRange(tower, this.effectiveRange);
+		this.repairMyStructuresInRange(tower, this.maximumRange);
 	},
 
 	attackHostileUnitsInRange: function(tower, range) {
 		return false;
 		var hostiles = strategyController.findHostileCreepsInRange(tower, range);
 		if (hostiles.length > 0) {
+			// order by damage
+			hostiles.sort(strategyController.compareDamage)
+			// attack the most damaged unit
 			tower.attack(hostiles[0]);
 			tower.say('attack');
 			return true;

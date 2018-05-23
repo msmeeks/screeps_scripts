@@ -18,6 +18,7 @@ var creepExtensions = {
 				if(this.pickup(target) == ERR_NOT_IN_RANGE) {
 					this.moveTo(target);
 				}
+				return;
 			}
 
 			var source = this.pos.findClosestByPath(FIND_SOURCES, {filter: (src) => src.energy > 0});

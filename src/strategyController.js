@@ -85,7 +85,11 @@ var strategyController = (function() {
 			findUnitsInRange(targetType, source, range, opts) {
 				source = source.pos || source;
 
-				return source.findInRange(targetType, range, opts);
+				if (range === Infinity) {
+					return Game.rooms[source.roomName].find(targetType, opts);
+				} else {
+					return source.findInRange(targetType, range, opts);
+				}
 			},
 
 			findAlliedUnitsInRange(targetType, source, range, opts) {
