@@ -55,7 +55,7 @@ var spawnController = {
         },
 		guard: {
 			name: 'guard',
-			minimumCount: function(spawn) {return spawn.room.memory.guardPositions.length},
+			minimumCount: function(spawn) {return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length},
 			template: 'guard'
 		}
     },
