@@ -1,0 +1,25 @@
+{
+  "name": "screeps_scripts",
+  "version": "1.0.0",
+  "description": "Scripts for screeps.com (MMO RTS for programmers)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msmeeks/screeps_scripts.git"
+  },
+  "author": "msmeeks",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/msmeeks/screeps_scripts/issues"
+  },
+  "homepage": "https://github.com/msmeeks/screeps_scripts#readme",
+  "devDependencies": {
+    "grunt": "^1.0.2",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-nodeunit": "^2.0.0",
+    "grunt-screeps": "^1.4.0"
+  }
+}
