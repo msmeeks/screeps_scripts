@@ -51,21 +51,17 @@ var structureExtensions = {
 			this.memory = memory;
 		};
 
-		// Container Extensions
-		Object.defineProperty(StructureContainer, 'totalStored', function() {
+		Object.defineProperty(Structure, 'totalStored', function() {
+			if (this.structureType != STRUCTURE_CONTAINER && this.structureType != STRUCTURE_STORAGE) {
+				return 0;
+			}
 			return _.sum(this.store);
 		});
 
-		Object.defineProperty(StructureContainer, 'availableCapacity', function() {
-			return this.storeCapacity - this.totalStored();
-		});
-
-		// Storage Extensions
-		Object.defineProperty(StructureStorage, 'totalStored', function() {
-			return _.sum(this.store);
-		});
-
-		Object.defineProperty(StructureStorage, 'availableCapacity', function() {
+		Object.defineProperty(Structure, 'availableCapacity', function() {
+			if (this.structureType != STRUCTURE_CONTAINER && this.structureType != STRUCTURE_STORAGE) {
+				return 0;
+			}
 			return this.storeCapacity - this.totalStored();
 		});
 	}
