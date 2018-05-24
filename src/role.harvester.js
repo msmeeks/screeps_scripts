@@ -14,7 +14,7 @@ var roleHarvester = {
         var target = this.getHarvestTarget(creep);
         if(target) {
             if(creep.carry.energy < Math.min(creep.carryCapacity, target.energyCapacity)) {
-                creep.gatherEnergy();
+                creep.gatherEnergy(FIND_SOURCES);
             } else {
                 this.deliverEnergy(creep, target);
             }
