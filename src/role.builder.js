@@ -19,17 +19,17 @@ var roleBuilder = {
             return false;
         }
 
-        if(creep.memory.building && creep.carry.energy == 0) {
+        if(this.getBuildingTarget(creep) && creep.carry.energy == 0) {
             this.setBuildingTarget(creep, false);
             creep.say('🔄 harvest');
         }
 
-        if(!creep.memory.building && creep.carry.energy == creep.carryCapacity) {
+        if(!this.getBuildingTarget(creep) && creep.carry.energy == creep.carryCapacity) {
             this.setBuildingTarget(creep, target);
             creep.say('🚧 build');
         }
 
-        if(this.getBuildTarget(creep)) {
+        if(this.getBuildingTarget(creep)) {
             this.build(creep, target);
         }
         else {
@@ -41,7 +41,7 @@ var roleBuilder = {
 
     setBuildingTarget: function (creep, target) {
         var targetId = target && target.id;
-        creep.memory.repairing = targetId;
+        creep.memory.building = targetId;
     },
 
     getBuildingTarget: function (creep) {
