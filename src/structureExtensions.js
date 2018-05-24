@@ -50,20 +50,6 @@ var structureExtensions = {
 
 			this.memory = memory;
 		};
-
-		Object.defineProperty(Structure, 'totalStored', function() {
-			if (this.structureType != STRUCTURE_CONTAINER && this.structureType != STRUCTURE_STORAGE) {
-				return 0;
-			}
-			return _.sum(this.store);
-		});
-
-		Object.defineProperty(Structure, 'availableCapacity', function() {
-			if (this.structureType != STRUCTURE_CONTAINER && this.structureType != STRUCTURE_STORAGE) {
-				return 0;
-			}
-			return this.storeCapacity - this.totalStored();
-		});
 	}
 };
 
