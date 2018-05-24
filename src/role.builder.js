@@ -73,7 +73,6 @@ var roleBuilder = {
 
     /** @param {Creep} creep **/
     getBuildTarget: function(creep) {
-        return creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
         const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
 
         // sort by repair score
