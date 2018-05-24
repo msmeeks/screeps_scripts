@@ -90,7 +90,7 @@ var roleRepairer = {
 		var distanceFactor = 100;
 		var distanceComponent = distanceFactor * creep.pos.getRangeTo(target);
 
-		var priorityFactor = 10;
+		var priorityFactor = 100;
 		var priorityComponent = priorityFactor * strategyController.getRepairPriority(target);
 
 		// Creeps repair 100 hits per energy, so spend at least 25 energy on a repair job
