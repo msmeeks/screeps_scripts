@@ -179,10 +179,14 @@ var spawnController = {
 		}
 
 		var levels = template.skillLevels;
+
+		var roomHasHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester').length > 0;
+		var availableCapacity = roomHasHarvesters ? spawn.room.energyCapacityAvailable : spawn.room.energyAvailable;
+
 		for (var i = levels.length-1; i >= 0; i--) {
 			var skills = levels[i];
 			var energyRequired = this.calculateBodyCost(skills);
-			if (spawn.room.energyCapacityAvailable >= energyRequired) {
+			if (availableCapacity >= energyRequired) {
 				return skills;
 			}
 		}
