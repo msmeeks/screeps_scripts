@@ -76,18 +76,12 @@ var roleRepairer = {
     
     /** @param {Creep} creep **/
     getRepairTarget: function(creep) {
-        //return creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: object => object.hits < object.hitsMax});
-
         const targets = creep.room.find(FIND_STRUCTURES, {
             filter: object => object.hits < this.getRepairThreshold(creep, object)
         });
         
-        targets.sort((a,b) => [
-			// sort by repair priority
-			//strategyController.compareRepairPriorities(a, b),
-			// then by repair score
-			(this.getRepairScore(creep, a) - this.getRepairScore(creep, b))
-		]);
+		// sort by repair score
+        targets.sort((a,b) => (this.getRepairScore(creep, a) - this.getRepairScore(creep, b)));
         
         return targets[0];
     },
@@ -102,9 +96,9 @@ var roleRepairer = {
 		// Creeps repair 100 hits per energy, so spend at least 25 energy on a repair job
 		// before moving to another otherwise equal job
 		var stickinessFactor = 100 * 25;
-		var stickinessComponent = stickinessFactor * this.getRepairingTarget(creep) ? 1 : 0;
+		var stickinessComponent = stickinessFactor * this.getRepairingTarget(creep) == target.id ? 1 : 0;
 
-		return target.hits + distanceComponent + priorityComponent + stickinessComponent;;
+		return target.hits + distanceComponent + priorityComponent - stickinessComponent;;
 	},
 
 	getRepairThreshold: function(creep, target) {

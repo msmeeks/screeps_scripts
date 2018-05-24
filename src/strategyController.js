@@ -39,8 +39,10 @@ var strategyController = (function() {
 						return 3;
 					case STRUCTURE_WALL:
 						return 4;
-					default:
+					case STRUCTURE_EXPANSION:
 						return 5;
+					default:
+						return 6;
 				}
 			},
 
