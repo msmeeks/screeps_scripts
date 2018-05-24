@@ -39,7 +39,7 @@ var strategyController = (function() {
 						return 3;
 					case STRUCTURE_WALL:
 						return 4;
-					case STRUCTURE_EXPANSION:
+					case STRUCTURE_EXTENSION:
 						return 5;
 					default:
 						return 6;
