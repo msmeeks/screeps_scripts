@@ -1,3 +1,5 @@
+var strategyController = require('strategyController');
+
 /*
  * Module code goes here. Use 'module.exports' to export things:
  * module.exports.thing = 'a thing';
