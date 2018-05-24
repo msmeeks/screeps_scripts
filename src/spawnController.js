@@ -25,7 +25,7 @@ var spawnController = {
 
 		miner: {
 			skillLevels: [
-				[WORK, CARRY, MOVE],
+				[WORK, WORK, CARRY, MOVE],
 				[WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
 				[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
 			]
