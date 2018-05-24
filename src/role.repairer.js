@@ -105,6 +105,10 @@ var roleRepairer = {
 		if (creep.memory.role == 'repairer') {
 			return target.hitsMax;
 		} else {
+			// If it's a low priority target, don't repair
+			if (strategyController.getRepairPriority(target) > 4) {
+				return 0;
+			}
 			return strategyController.getRepairThreshold(target);
 		}
 	}
