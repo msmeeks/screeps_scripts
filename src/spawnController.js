@@ -53,7 +53,7 @@ var spawnController = {
         },
 		miner: {
 			name: 'miner',
-			minimumCount: function(spawn) {return spawn.room.find(FIND_SOURCES).length},
+			minimumCount: function(spawn) {return spawn.room.memory.minerPositions && spawn.room.memory.minerPositions.length},
 			template: 'miner'
 		},
         builder: {

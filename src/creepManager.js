@@ -25,8 +25,10 @@ var creepManager = {
 				case 'builder':
 				case 'repairer':
 				case 'upgrader':
-				case 'miner':
 					this.manageWorker(creep);
+					break;
+				case 'miner':
+					this.manageMiner(creep);
 					break;
 				case 'guard':
 					this.manageGuard(creep);
@@ -52,9 +54,6 @@ var creepManager = {
         if(creep.memory.role == 'upgrader') {
             engaged = roleUpgrader.run(creep);
         }
-        if(creep.memory.role == 'miner') {
-            engaged = roleMiner.run(creep);
-        }
         
         // If the creep is not engaged in it's role, try other roles in priority order
         engaged = engaged ||
@@ -68,12 +67,17 @@ var creepManager = {
 		}
 	},
 
-    /** @param {Creep} creep **/
-	manageGuard: function(creep) {
+	assignPosition: function(creep) {
 		if (creep.getAssignedPos() === undefined) {
-			var unassignedPositions = creep.room.memory.guardPositions.map(x => screepsUtils.roomPositionFromObject(x));
+			var positionsKey = creep.memory.role + 'Positions';
+			var positions = creep.room.memory[positionsKey];
+			if (!positions) {
+				return false;
+			}
 
-			var units = _.filter(Game.creeps, (c,x,y) => c.room.id == creep.room.id && c.memory.role == 'guard');
+			var unassignedPositions = positions.map(x => screepsUtils.roomPositionFromObject(x));
+
+			var units = _.filter(Game.creeps, (c,x,y) => c.room.id == creep.room.id && c.memory.role == creep.memory.role);
 			var numUnits = units.length;
 
 			for (var i = 0; i < numUnits; i++) {
@@ -81,8 +85,21 @@ var creepManager = {
 			}
 			creep.setAssignedPos(unassignedPositions[0]);
 		}
+		return true;
+	},
+
+    /** @param {Creep} creep **/
+	manageGuard: function(creep) {
+		this.assignPosition(creep);
 
 		roleGuard.run(creep);
+	},
+
+    /** @param {Creep} creep **/
+	manageMiner: function(creep) {
+		this.assignPosition(creep);
+
+		roleMiner.run(creep);
 	}
 }
 

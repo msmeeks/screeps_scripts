@@ -140,6 +140,20 @@ var creepExtensions = {
 		Creep.prototype.setAssignedPos = function(pos) {
 			this.memory.assignedPos = pos;
 		};
+
+		Creep.prototype.goToAssignedPos = function() {
+			var assignedPos = screepsUtils.roomPositionFromObject(this.memory.assignedPos);
+			if (!assignedPos) {
+				return false;
+			}
+
+			if (!this.pos.isEqualTo(assignedPos)) {
+				this.moveTo(assignedPos, {visualizePathStyle: {stroke: '#ffffff'}});
+				return true;
+			}
+
+			return false;
+		}
 	}
 };
 

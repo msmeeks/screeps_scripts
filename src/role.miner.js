@@ -11,10 +11,15 @@ var roleMiner = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+		if (creep.goToAssignedPos()) {
+			return true;
+		}
+
         if(creep.carry.energy < creep.carryCapacity) {
-            creep.gatherEnergy(FIND_SOURCES);
+			var target = creep.pos.findInRange(FIND_SOURCES, 1)[0];
+			var result = creep.harvest(target);
         } else {
-            this.deliverEnergy(creep);
+            this.depositEnergy(creep);
         }
         return true;
     },
@@ -23,25 +28,23 @@ var roleMiner = {
      * @param {Creep} creep
      * @param {Structure} target
     **/
-    deliverEnergy: function(creep) {
-        var target = this.getDeliveryTarget(creep);
-        if (!target) {
+    depositEnergy: function(creep) {
+        var target = this.getDepositTarget(creep);
+        if(target && creep.transfer(target, RESOURCE_ENERGY) != OK) {
             creep.drop(RESOURCE_ENERGY);
-        } else if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     },
 
     /** @param {Creep} creep **/
-    getDeliveryTarget: function(creep) {
-        var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+    getDepositTarget: function(creep) {
+        var target = creep.pos.findInRange(FIND_STRUCTURES, 1, {
             filter: (structure) => (
                 (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) &&
                 _.sum(structure.store) < structure.storeCapacity
             )
         });
 
-        return target;
+        return target[0];
     }
 };
 
