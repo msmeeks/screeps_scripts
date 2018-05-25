@@ -51,6 +51,11 @@ var spawnController = {
             minimumCount: 1,
             template: 'worker'
         },
+		miner: {
+			name: 'miner',
+			minimumCount: function(spawn) {return spawn.room.find(FIND_SOURCES).length},
+			template: 'miner'
+		},
         builder: {
             name: 'builder',
             minimumCount: 2,
@@ -61,11 +66,6 @@ var spawnController = {
             minimumCount: 1,
             template: 'worker'
         },
-		miner: {
-			name: 'miner',
-			minimumCount: function(spawn) {return spawn.room.find(FIND_SOURCES).length},
-			template: 'miner'
-		},
 		guard: {
 			name: 'guard',
 			minimumCount: function(spawn) {return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length},
