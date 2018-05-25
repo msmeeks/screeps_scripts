@@ -74,7 +74,7 @@ var creepExtensions = {
 				return score;
 			};
 
-			var getGatherTarget = function(creep, supplyType) {
+			var getGatherTargets = function(creep, supplyType) {
 				// get all available supplys of energy
 				var supplies = [];
 				if (!supplyType || supplyType == FIND_DROPPED_RESOURCES) {
@@ -95,7 +95,7 @@ var creepExtensions = {
 				// sort supplies by score
 				supplies.sort((a, b) => (getSupplyScore(creep, a) - getSupplyScore(creep, b)));
 
-				return supplies[0];
+				return supplies;
 			};
 
 			var gatherFromSupply = function(creep, supply) {
@@ -111,25 +111,35 @@ var creepExtensions = {
 				}
 			};
 
-			var target = getGatherTarget(this, targetType);
-
-			this.memory.gatheringTarget = target && target.id;
+			var targets = getGatherTargets(this, targetType);
 			
-			if (!target) {
+			// There were no valid targets, so return false
+			if (!targets) {
 				return false;
 			}
 
-			var result = gatherFromSupply(this, target);
+			var numTargets = targets.length;
+			for (var i = 0; i < numTargets; i++) {
+				var target = targets[i];
 
-			if (result == undefined) {
-				return false;
+				// try to gather energy from the target
+				var result = gatherFromSupply(this, target);
+
+				// if it's not in range
+				if (result == ERR_NOT_IN_RANGE) {
+					// try to move to the target
+					if (this.moveTo(target) == ERR_NO_PATH) {
+						// if there is no path, then try the next target
+						continue;
+					}
+				// if it worked, save the target and return true
+				} else if (result == OK) {
+					this.memory.gatheringTarget = target && target.id;
+					return true;
+				}
 			}
-
-			if (result == ERR_NOT_IN_RANGE) {
-				this.moveTo(target);
-			}
-
-			return true;
+			// there were no reachable supplies with energy, so return false
+			return false;
 
 		};
 
