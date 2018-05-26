@@ -32,7 +32,7 @@ var towerController = {
 
 		// else if my structures in optimal repair range need repair, repair them
 		this.repairMyStructuresInRange(tower, this.optimalRange) ||
-		
+
 		// else if my units in effective heal range are hurt, heal them
 		this.healMyCreepsInRange(tower, this.effectiveRange) ||
 

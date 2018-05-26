@@ -57,6 +57,10 @@ var strategyController = (function() {
 			},
 
 			// Strategic predicates
+			isMine: function(target) {
+				return target.my || (target.room.controller && target.room.controller.my);
+			},
+
 			isAlly: function(target) {
 				target = (target.owner && target.owner.username) || target;
 				return _.includes(instance.allies, target);
@@ -71,7 +75,7 @@ var strategyController = (function() {
 			},
 
 			needsRepair: function(target) {
-				return target.structureType !== undefined && target.hits < instance.getRepairThreshold(target);
+				return target instanceof Structure && target.hits < instance.getRepairThreshold(target);
 			},
 
 			// Strategic comparators
@@ -94,10 +98,23 @@ var strategyController = (function() {
 				}
 			},
 
+			findMyUnitsInRange(targetType, source, range, opts) {
+				opts = opts || {};
+				if (opts.filter !== undefined) {
+                    var originalFilter = opts.filter;
+					opts.filter = (x) => originalFilter(x) && instance.isMine(x);
+				} else {
+					opts.filter = instance.isMine;
+				}
+
+				return instance.findUnitsInRange(targetType, source, range, opts);
+			},
+
 			findAlliedUnitsInRange(targetType, source, range, opts) {
 				opts = opts || {};
 				if (opts.filter !== undefined) {
-					opts.filter = x => opts.filter(x) && instance.isAllied(x);
+                    var originalFilter = opts.filter;
+					opts.filter = (x) => originalFilter(x) && instance.isAllied(x);
 				} else {
 					opts.filter = instance.isAllied;
 				}
@@ -108,7 +125,8 @@ var strategyController = (function() {
 			findHostileUnitsInRange(targetType, source, range, opts) {
 				opts = opts || {};
 				if (opts.filter !== undefined) {
-					opts.filter = x => opts.filter(x) && instance.isHostile(x);
+                    var originalFilter = opts.filter;
+					opts.filter = (x) => originalFilter(x) && instance.isHostile(x);
 				} else {
 					opts.filter = instance.isHostile;
 				}
@@ -118,7 +136,7 @@ var strategyController = (function() {
 
 			// Find Creeps
 			findMyCreepsInRange(source, range, opts) {
-				return instance.findUnitsInRange(FIND_MY_CREEPS, source, range, opts); 
+				return instance.findUnitsInRange(FIND_MY_CREEPS, source, range, opts);
 			},
 
 			findHostileCreepsInRange(source, range, opts) {
@@ -131,7 +149,7 @@ var strategyController = (function() {
 
 			// Find Structures
 			findMyStructuresInRange(source, range, opts) {
-				return instance.findUnitsInRange(FIND_MY_STRUCTURES, source, range, opts); 
+				return instance.findMyUnitsInRange(FIND_STRUCTURES, source, range, opts);
 			},
 
 			findHostileStructuresInRange(source, range, opts) {
