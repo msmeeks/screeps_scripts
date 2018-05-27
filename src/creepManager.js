@@ -21,6 +21,10 @@ var creepManager = {
 	manageCreeps: function() {
 		for(var name in Game.creeps) {
 			var creep = Game.creeps[name];
+            if (creep.spawning) {
+                continue;
+            }
+
 			switch (creep.memory.role) {
 				case 'harvester':
 				case 'builder':

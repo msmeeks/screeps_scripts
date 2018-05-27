@@ -36,7 +36,10 @@ var spawnController = {
 				[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
 				[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
 				[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-				[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+				[
+                    CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
+                    MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
+                ],
 			]
 		},
 
@@ -69,7 +72,7 @@ var spawnController = {
 			name: 'collector',
 			minimumCount: 1,
 			template: 'transporter',
-            memory: function(spawn) { return {collectionPoints: spawn.room.collectionPoints}; }
+            memory: function(spawn) { return {collectionPoints: spawn.room.memory.collectionPoints}; }
 		},
         builder: {
             name: 'builder',
@@ -171,9 +174,9 @@ var spawnController = {
 			return {success: true};
 		}
 
-        var memory = role.memory || {};
-        if (typeof role.memory === 'function') {
-            memory = role.memory(spawn);
+        var memory = this.roles[role].memory || {};
+        if (typeof memory === 'function') {
+            memory = memory(spawn);
         }
         memory.role = role;
 

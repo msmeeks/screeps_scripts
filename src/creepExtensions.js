@@ -114,7 +114,7 @@ var creepExtensions = {
 			var target = getGatherTarget(this, targetType);
 
 			this.memory.gatheringTarget = target && target.id;
-			
+
 			if (!target) {
 				return false;
 			}

@@ -92,6 +92,7 @@ var roleCollector = {
             return false;
         }
 
+        // TODO: Collect dropped resources
         var target = this.getCollectionTarget(creep);
         if (!target) {
             return false;
