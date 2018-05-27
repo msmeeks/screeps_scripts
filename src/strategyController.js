@@ -13,6 +13,8 @@ var strategyController = (function() {
 
 	function createInstance() {
 		return {
+			myUsername: 'Ragair',
+
 			repairThresholds: {
 				0: 500,
 				1: 1000,
@@ -58,7 +60,20 @@ var strategyController = (function() {
 
 			// Strategic predicates
 			isMine: function(target) {
-				return target.my || (target.room.controller && target.room.controller.my);
+
+				if (target.my !== undefined) {
+					return target.my;
+				}
+
+				if (target.owner !== undefined) {
+					return target.owner == instance.myUsername;
+				}
+
+                if (target.username !== undefined) {
+                    return target.username == instance.myUsername;
+                }
+
+				return (target.room && target.room.controller && target.room.controller.my);
 			},
 
 			isAlly: function(target) {
@@ -101,7 +116,7 @@ var strategyController = (function() {
 			findMyUnitsInRange(targetType, source, range, opts) {
 				opts = opts || {};
 				if (opts.filter !== undefined) {
-                    var originalFilter = opts.filter;
+					var originalFilter = opts.filter;
 					opts.filter = (x) => originalFilter(x) && instance.isMine(x);
 				} else {
 					opts.filter = instance.isMine;
@@ -113,7 +128,7 @@ var strategyController = (function() {
 			findAlliedUnitsInRange(targetType, source, range, opts) {
 				opts = opts || {};
 				if (opts.filter !== undefined) {
-                    var originalFilter = opts.filter;
+					var originalFilter = opts.filter;
 					opts.filter = (x) => originalFilter(x) && instance.isAllied(x);
 				} else {
 					opts.filter = instance.isAllied;
@@ -125,7 +140,7 @@ var strategyController = (function() {
 			findHostileUnitsInRange(targetType, source, range, opts) {
 				opts = opts || {};
 				if (opts.filter !== undefined) {
-                    var originalFilter = opts.filter;
+					var originalFilter = opts.filter;
 					opts.filter = (x) => originalFilter(x) && instance.isHostile(x);
 				} else {
 					opts.filter = instance.isHostile;

@@ -49,7 +49,14 @@ var spawnController = {
 				[TOUGH, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
 				[TOUGH, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
 			]
-		}
+		},
+
+        claimer: {
+            skillLevels: [
+                [MOVE, MOVE, CLAIM],
+                [MOVE, MOVE, CLAIM, CLAIM],
+            ]
+        }
 	},
 
     roles: {
@@ -88,7 +95,12 @@ var spawnController = {
 			name: 'guard',
 			minimumCount: function(spawn) { return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length; },
 			template: 'guard'
-		}
+		},
+        claimer: {
+            name: 'claimer',
+            minimumCount: function(spawn) { return spawn.room.memory.claimerPositions && spawn.room.memory.claimerPositions.length; },
+            template: 'claimer'
+        },
     },
 
 	manageSpawns: function() {

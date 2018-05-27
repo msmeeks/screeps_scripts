@@ -7,6 +7,7 @@ var roleRepairer = require('role.repairer');
 var roleMiner = require('role.miner');
 var roleCollector = require('role.collector');
 var roleGuard = require('role.guard');
+var roleClaimer = require('role.claimer');
 
 /*
  * Module code goes here. Use 'module.exports' to export things:
@@ -33,13 +34,12 @@ var creepManager = {
 					this.manageWorker(creep);
 					break;
 				case 'miner':
-					this.manageMiner(creep);
+				case 'guard':
+				case 'claimer':
+					this.manageAssignedPositionRoles(creep);
 					break;
 				case 'collector':
 					this.manageCollector(creep);
-					break;
-				case 'guard':
-					this.manageGuard(creep);
 					break;
 				default:
 					console.log('Unrecognized role ' + creep.memory.role + ' for creep ' + creep.name);
@@ -97,17 +97,20 @@ var creepManager = {
 	},
 
     /** @param {Creep} creep **/
-	manageGuard: function(creep) {
+	manageAssignedPositionRoles: function(creep) {
 		this.assignPosition(creep);
 
-		roleGuard.run(creep);
-	},
-
-    /** @param {Creep} creep **/
-	manageMiner: function(creep) {
-		this.assignPosition(creep);
-
-		roleMiner.run(creep);
+        switch (creep.memory.role) {
+            case 'miner':
+                roleMiner.run(creep);
+                break;
+            case 'guard':
+                roleGuard.run(creep);
+                break;
+            case 'claimer':
+                roleClaimer.run(creep);
+                break;
+        }
 	},
 
     /** @param {Creep} creep **/
