@@ -19,36 +19,36 @@ var roleClaimer = require('role.claimer');
  */
 
 var creepManager = {
-	manageCreeps: function() {
-		for(var name in Game.creeps) {
-			var creep = Game.creeps[name];
+    manageCreeps: function() {
+        for(var name in Game.creeps) {
+            var creep = Game.creeps[name];
             if (creep.spawning) {
                 continue;
             }
 
-			switch (creep.memory.role) {
-				case 'harvester':
-				case 'builder':
-				case 'repairer':
-				case 'upgrader':
-					this.manageWorker(creep);
-					break;
-				case 'miner':
-				case 'guard':
-				case 'claimer':
-					this.manageAssignedPositionRoles(creep);
-					break;
-				case 'collector':
-					this.manageCollector(creep);
-					break;
-				default:
-					console.log('Unrecognized role ' + creep.memory.role + ' for creep ' + creep.name);
-			}
-		}
-	},
+            switch (creep.memory.role) {
+                case 'harvester':
+                case 'builder':
+                case 'repairer':
+                case 'upgrader':
+                    this.manageWorker(creep);
+                    break;
+                case 'miner':
+                case 'guard':
+                case 'claimer':
+                    this.manageAssignedPositionRoles(creep);
+                    break;
+                case 'collector':
+                    this.manageCollector(creep);
+                    break;
+                default:
+                    console.log('Unrecognized role ' + creep.memory.role + ' for creep ' + creep.name);
+            }
+        }
+    },
 
     /** @param {Creep} creep **/
-	manageWorker: function(creep) {
+    manageWorker: function(creep) {
         var engaged = false;
         if(creep.memory.role == 'harvester') {
             engaged = roleHarvester.run(creep);
@@ -70,35 +70,35 @@ var creepManager = {
             roleRepairer.run(creep) ||
             roleUpgrader.run(creep);
 
-		if(!engaged) {
-			console.log(creep.name + ' not engaged');
-		}
-	},
+        if(!engaged) {
+            console.log(creep.name + ' not engaged');
+        }
+    },
 
-	assignPosition: function(creep) {
-		if (creep.getAssignedPos() === undefined) {
-			var positionsKey = creep.memory.role + 'Positions';
-			var positions = creep.room.memory[positionsKey];
-			if (!positions) {
-				return false;
-			}
+    assignPosition: function(creep) {
+        if (creep.getAssignedPos() === undefined) {
+            var positionsKey = creep.memory.role + 'Positions';
+            var positions = creep.room.memory[positionsKey];
+            if (!positions) {
+                return false;
+            }
 
-			var unassignedPositions = positions.map(x => screepsUtils.roomPositionFromObject(x));
+            var unassignedPositions = positions.map(x => screepsUtils.roomPositionFromObject(x));
 
-			var units = _.filter(Game.creeps, (c,x,y) => c.room.id == creep.room.id && c.memory.role == creep.memory.role);
-			var numUnits = units.length;
+            var units = _.filter(Game.creeps, (c,x,y) => c.room.id == creep.room.id && c.memory.role == creep.memory.role);
+            var numUnits = units.length;
 
-			for (var i = 0; i < numUnits; i++) {
-				unassignedPositions = unassignedPositions.filter(pos => !pos.isEqualTo(units[i].getAssignedPos()));
-			}
-			creep.setAssignedPos(unassignedPositions[0]);
-		}
-		return true;
-	},
+            for (var i = 0; i < numUnits; i++) {
+                unassignedPositions = unassignedPositions.filter(pos => !pos.isEqualTo(units[i].getAssignedPos()));
+            }
+            creep.setAssignedPos(unassignedPositions[0]);
+        }
+        return true;
+    },
 
     /** @param {Creep} creep **/
-	manageAssignedPositionRoles: function(creep) {
-		this.assignPosition(creep);
+    manageAssignedPositionRoles: function(creep) {
+        this.assignPosition(creep);
 
         switch (creep.memory.role) {
             case 'miner':
@@ -111,12 +111,12 @@ var creepManager = {
                 roleClaimer.run(creep);
                 break;
         }
-	},
+    },
 
     /** @param {Creep} creep **/
-	manageCollector: function(creep) {
-		roleCollector.run(creep);
-	}
+    manageCollector: function(creep) {
+        roleCollector.run(creep);
+    }
 }
 
 module.exports = creepManager;

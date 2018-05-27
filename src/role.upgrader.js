@@ -29,7 +29,7 @@ var roleUpgrader = {
         else {
             creep.gatherEnergy();
         }
-        
+
         return true; // The upgrader should always upgrade
     }
 };

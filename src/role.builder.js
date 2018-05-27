@@ -35,7 +35,7 @@ var roleBuilder = {
         else {
             creep.gatherEnergy();
         }
-        
+
         return true;
     },
 
@@ -57,7 +57,7 @@ var roleBuilder = {
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     },
-    
+
     getBuildScore: function(creep, target) {
         var distanceFactor = 100;
         var distanceComponent = distanceFactor * creep.pos.getRangeTo(target);
@@ -79,7 +79,7 @@ var roleBuilder = {
 
         // sort by repair score
         targets.sort((a,b) => (this.getBuildScore(creep, a) - this.getBuildScore(creep, b)));
- 
+
         return targets[0];
     }
 };

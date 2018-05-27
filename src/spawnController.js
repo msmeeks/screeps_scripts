@@ -10,46 +10,46 @@
 var spawnController = {
     errors: {
         ROLE_UNDEFINED: 1,
-		TEMPLATE_UNDEFINED: 2,
-		INSUFFICIENT_ENERGY_CAPACITY: 3
+        TEMPLATE_UNDEFINED: 2,
+        INSUFFICIENT_ENERGY_CAPACITY: 3
     },
 
-	templates: {
-		worker: {
-			skillLevels: [
-				[WORK, CARRY, MOVE, MOVE],
-				[WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
-				[WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-			]
-		},
+    templates: {
+        worker: {
+            skillLevels: [
+                [WORK, CARRY, MOVE, MOVE],
+                [WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE, MOVE],
+                [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+            ]
+        },
 
-		miner: {
-			skillLevels: [
-				[WORK, WORK, CARRY, MOVE],
-				[WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
-				[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
-			]
-		},
+        miner: {
+            skillLevels: [
+                [WORK, WORK, CARRY, MOVE],
+                [WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
+                [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+            ]
+        },
 
-		transporter: {
-			skillLevels: [
-				[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
-				[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
-				[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-				[
+        transporter: {
+            skillLevels: [
+                [CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
+                [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+                [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+                [
                     CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY,
                     MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE
                 ],
-			]
-		},
+            ]
+        },
 
-		guard: {
-			skillLevels: [
-				[MOVE, ATTACK, ATTACK, ATTACK],
-				[TOUGH, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
-				[TOUGH, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
-			]
-		},
+        guard: {
+            skillLevels: [
+                [MOVE, ATTACK, ATTACK, ATTACK],
+                [TOUGH, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
+                [TOUGH, MOVE, MOVE, MOVE, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK, ATTACK],
+            ]
+        },
 
         claimer: {
             skillLevels: [
@@ -57,7 +57,7 @@ var spawnController = {
                 [MOVE, MOVE, CLAIM, CLAIM],
             ]
         }
-	},
+    },
 
     roles: {
         harvester: {
@@ -70,17 +70,17 @@ var spawnController = {
             minimumCount: 1,
             template: 'worker'
         },
-		miner: {
-			name: 'miner',
-			minimumCount: function(spawn) { return spawn.room.memory.minerPositions && spawn.room.memory.minerPositions.length; },
-			template: 'miner'
-		},
-		collector: {
-			name: 'collector',
-			minimumCount: 1,
-			template: 'transporter',
+        miner: {
+            name: 'miner',
+            minimumCount: function(spawn) { return spawn.room.memory.minerPositions && spawn.room.memory.minerPositions.length; },
+            template: 'miner'
+        },
+        collector: {
+            name: 'collector',
+            minimumCount: 1,
+            template: 'transporter',
             memory: function(spawn) { return {collectionPoints: spawn.room.memory.collectionPoints}; }
-		},
+        },
         builder: {
             name: 'builder',
             minimumCount: 2,
@@ -91,11 +91,11 @@ var spawnController = {
             minimumCount: 1,
             template: 'worker'
         },
-		guard: {
-			name: 'guard',
-			minimumCount: function(spawn) { return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length; },
-			template: 'guard'
-		},
+        guard: {
+            name: 'guard',
+            minimumCount: function(spawn) { return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length; },
+            template: 'guard'
+        },
         claimer: {
             name: 'claimer',
             minimumCount: function(spawn) { return spawn.room.memory.claimerPositions && spawn.room.memory.claimerPositions.length; },
@@ -103,17 +103,17 @@ var spawnController = {
         },
     },
 
-	manageSpawns: function() {
-		for (var spawnId in Game.spawns) {
-			this.manageSpawn(Game.spawns[spawnId]);
-		}
-	},
+    manageSpawns: function() {
+        for (var spawnId in Game.spawns) {
+            this.manageSpawn(Game.spawns[spawnId]);
+        }
+    },
 
     /** @param {Spawn} spawn **/
     manageSpawn: function(spawn) {
         if(spawn.spawning) {
             var spawningCreep = Game.creeps[spawn.spawning.name];
-			spawn.say('🛠️' + spawningCreep.memory.role);
+            spawn.say('🛠️' + spawningCreep.memory.role);
         } else {
             this.replaceUnits(spawn) || this.upgradeUnits(spawn);
         }
@@ -125,45 +125,45 @@ var spawnController = {
             var role = this.roles[roleKey];
             var units = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
 
-			var minimumCount = role.minimumCount;
-			if (typeof role.minimumCount === 'function') {
-				minimumCount = role.minimumCount(spawn);
-			}
+            var minimumCount = role.minimumCount;
+            if (typeof role.minimumCount === 'function') {
+                minimumCount = role.minimumCount(spawn);
+            }
 
             if (units.length < minimumCount) {
                 var result = this.spawnUnit(spawn, role.name);
-				if (!result.success) {
-					console.log('Failed to spawn ' + roleKey + '. Error code: ' + result.error);
-				} else {
-					return true;
-				}
+                if (!result.success) {
+                    console.log('Failed to spawn ' + roleKey + '. Error code: ' + result.error);
+                } else {
+                    return true;
+                }
             }
         }
-		return false;
+        return false;
     },
 
     /** @param {Spawn} spawn **/
-	upgradeUnits: function(spawn) {
+    upgradeUnits: function(spawn) {
         for(var roleKey in this.roles) {
             var role = this.roles[roleKey];
             var units = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
 
             for (var i = 0; i < units.length; i++) {
-				var unit = units[i];
-				var bodyCost = this.calculateBodyCost(unit.body);
-				var upgradeCost = this.calculateBodyCost(this.getSkillsForRole(spawn, role));
-				if (bodyCost < upgradeCost && upgradeCost <= spawn.room.energyAvailable) {
-					var result = this.spawnUnit(spawn, role.name);
-					if (!result.success) {
-						console.log('Failed to upgrade ' + roleKey + '. Error code: ' + result.error);
-					}
-					unit.suicide();
-					return true;
-				}
+                var unit = units[i];
+                var bodyCost = this.calculateBodyCost(unit.body);
+                var upgradeCost = this.calculateBodyCost(this.getSkillsForRole(spawn, role));
+                if (bodyCost < upgradeCost && upgradeCost <= spawn.room.energyAvailable) {
+                    var result = this.spawnUnit(spawn, role.name);
+                    if (!result.success) {
+                        console.log('Failed to upgrade ' + roleKey + '. Error code: ' + result.error);
+                    }
+                    unit.suicide();
+                    return true;
+                }
             }
         }
-		return false;
-	},
+        return false;
+    },
 
     /**
      * @param {Spawn} spawn
@@ -174,17 +174,17 @@ var spawnController = {
             return {succes: false, error: this.errors.ROLE_UNDEFINED};
         }
 
-		var skills = this.getSkillsForRole(spawn, this.roles[role]);
+        var skills = this.getSkillsForRole(spawn, this.roles[role]);
 
-		if (!Array.isArray(skills)) {
-			return {success: false, error: skills};
-		}
+        if (!Array.isArray(skills)) {
+            return {success: false, error: skills};
+        }
 
-		var energyRequired = this.calculateBodyCost(skills);
-		// There is not currently enough energy to spawn this unit, so just continue and try again later
-		if (energyRequired > spawn.room.energyAvailable) {
-			return {success: true};
-		}
+        var energyRequired = this.calculateBodyCost(skills);
+        // There is not currently enough energy to spawn this unit, so just continue and try again later
+        if (energyRequired > spawn.room.energyAvailable) {
+            return {success: true};
+        }
 
         var memory = this.roles[role].memory || {};
         if (typeof memory === 'function') {
@@ -200,41 +200,41 @@ var spawnController = {
             {memory: memory}
         );
 
-		return {success: true};
+        return {success: true};
     },
 
-	getSkillsForRole: function (spawn, role) {
-		var template = role.template;
-		return this.getSkillsFromTemplate(spawn, template);
-	},
+    getSkillsForRole: function (spawn, role) {
+        var template = role.template;
+        return this.getSkillsFromTemplate(spawn, template);
+    },
 
-	getSkillsFromTemplate: function (spawn, templateName) {
-		var template = this.templates[templateName];
-		if (template === undefined) {
-			return this.errors.TEMPLATE_UNDEFINED;
-		}
+    getSkillsFromTemplate: function (spawn, templateName) {
+        var template = this.templates[templateName];
+        if (template === undefined) {
+            return this.errors.TEMPLATE_UNDEFINED;
+        }
 
-		var levels = template.skillLevels;
+        var levels = template.skillLevels;
 
-		var roomHasHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester').length > 0;
-		var availableCapacity = roomHasHarvesters ? spawn.room.energyCapacityAvailable : spawn.room.energyAvailable;
+        var roomHasHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester').length > 0;
+        var availableCapacity = roomHasHarvesters ? spawn.room.energyCapacityAvailable : spawn.room.energyAvailable;
 
-		for (var i = levels.length-1; i >= 0; i--) {
-			var skills = levels[i];
-			var energyRequired = this.calculateBodyCost(skills);
-			if (availableCapacity >= energyRequired) {
-				return skills;
-			}
-		}
+        for (var i = levels.length-1; i >= 0; i--) {
+            var skills = levels[i];
+            var energyRequired = this.calculateBodyCost(skills);
+            if (availableCapacity >= energyRequired) {
+                return skills;
+            }
+        }
 
-		return this.errors.INSUFFICIENT_ENERGY_CAPACITY;
-	},
+        return this.errors.INSUFFICIENT_ENERGY_CAPACITY;
+    },
 
-	calculateBodyCost: function(parts) {
-		return parts.reduce(function (cost, part) {
-			return cost + BODYPART_COST[part.type || part];
-		}, 0);
-	}
+    calculateBodyCost: function(parts) {
+        return parts.reduce(function (cost, part) {
+            return cost + BODYPART_COST[part.type || part];
+        }, 0);
+    }
 }
 
 module.exports = spawnController

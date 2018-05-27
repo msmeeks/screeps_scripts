@@ -11,13 +11,13 @@ var roleMiner = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-		if (creep.goToAssignedPos()) {
-			return true;
-		}
+        if (creep.goToAssignedPos()) {
+            return true;
+        }
 
         if(creep.carry.energy < creep.carryCapacity) {
-			var target = creep.pos.findInRange(FIND_SOURCES, 1)[0];
-			creep.harvest(target);
+            var target = creep.pos.findInRange(FIND_SOURCES, 1)[0];
+            creep.harvest(target);
         } else {
             this.depositEnergy(creep);
         }

@@ -12,57 +12,57 @@ var strategyController = require('strategyController');
 var roleRepairer = {
     /** @param {Creep} creep **/
     run: function(creep) {
-		var target = this.getRepairTarget(creep);
-		if (!target) {
-			this.setRepairingTarget(creep, null);
-			return false;
-		}
+        var target = this.getRepairTarget(creep);
+        if (!target) {
+            this.setRepairingTarget(creep, null);
+            return false;
+        }
 
         if(this.getRepairingTarget(creep) && creep.carry.energy == 0) {
-			this.setRepairingTarget(creep, null);
+            this.setRepairingTarget(creep, null);
             creep.say('🔄 harvest');
         }
 
         if(!this.getRepairingTarget(creep) && creep.carry.energy == creep.carryCapacity) {
-			this.setRepairingTarget(creep, target);
+            this.setRepairingTarget(creep, target);
             creep.say('🚧 repair');
         }
 
         if(this.getRepairingTarget(creep)) {
-			this.repair(creep, target);
+            this.repair(creep, target);
         }
         else {
             creep.gatherEnergy();
         }
-        
+
         return true;
     },
 
-	setRepairingTarget: function(creep, target) {
-		// FIXME: setting the repairer seems to have broken the repair role
-		/*
-		if (target) {
-			target.addRepairer(creep);
-		}
-		*/
+    setRepairingTarget: function(creep, target) {
+        // FIXME: setting the repairer seems to have broken the repair role
+        /*
+        if (target) {
+            target.addRepairer(creep);
+        }
+        */
 
-		var targetId = target && target.id;
+        var targetId = target && target.id;
 
 /*
-		var oldTarget = this.getRepairingTarget(creep);
-		if (oldTarget && oldTarget.id != targetId) {
-			oldTarget.removeRepairer(creep);
-		}
-		*/
+        var oldTarget = this.getRepairingTarget(creep);
+        if (oldTarget && oldTarget.id != targetId) {
+            oldTarget.removeRepairer(creep);
+        }
+        */
 
-		creep.memory.repairing = targetId;
-	},
+        creep.memory.repairing = targetId;
+    },
 
-	getRepairingTarget: function (creep) {
-		return creep.memory.repairing;
-		// FIXME
-		return creep.memory.repairing && Game.structures[creep.memory.repairing];
-	},
+    getRepairingTarget: function (creep) {
+        return creep.memory.repairing;
+        // FIXME
+        return creep.memory.repairing && Game.structures[creep.memory.repairing];
+    },
 
     /**
      * @param {Creep} creep
@@ -73,45 +73,45 @@ var roleRepairer = {
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     },
-    
+
     /** @param {Creep} creep **/
     getRepairTarget: function(creep) {
         const targets = creep.room.find(FIND_STRUCTURES, {
             filter: object => object.hits < this.getRepairThreshold(creep, object)
         });
-        
-		// sort by repair score
+
+        // sort by repair score
         targets.sort((a,b) => (this.getRepairScore(creep, a) - this.getRepairScore(creep, b)));
-        
+
         return targets[0];
     },
 
-	getRepairScore: function(creep, target) {
-		var distanceFactor = 100;
-		var distanceComponent = distanceFactor * creep.pos.getRangeTo(target);
+    getRepairScore: function(creep, target) {
+        var distanceFactor = 100;
+        var distanceComponent = distanceFactor * creep.pos.getRangeTo(target);
 
-		var priorityFactor = 100;
-		var priorityComponent = priorityFactor * strategyController.getRepairPriority(target);
+        var priorityFactor = 100;
+        var priorityComponent = priorityFactor * strategyController.getRepairPriority(target);
 
-		// Creeps repair 100 hits per energy, so spend at least 25 energy on a repair job
-		// before moving to another otherwise equal job
-		var stickinessFactor = 100 * 25;
-		var stickinessComponent = stickinessFactor * this.getRepairingTarget(creep) == target.id ? 1 : 0;
+        // Creeps repair 100 hits per energy, so spend at least 25 energy on a repair job
+        // before moving to another otherwise equal job
+        var stickinessFactor = 100 * 25;
+        var stickinessComponent = stickinessFactor * this.getRepairingTarget(creep) == target.id ? 1 : 0;
 
-		return target.hits + distanceComponent + priorityComponent - stickinessComponent;;
-	},
+        return target.hits + distanceComponent + priorityComponent - stickinessComponent;;
+    },
 
-	getRepairThreshold: function(creep, target) {
-		if (creep.memory.role == 'repairer') {
-			return target.hitsMax;
-		} else {
-			// If it's a low priority target, don't repair
-			if (strategyController.getRepairPriority(target) > 4) {
-				return 0;
-			}
-			return strategyController.getRepairThreshold(target);
-		}
-	}
+    getRepairThreshold: function(creep, target) {
+        if (creep.memory.role == 'repairer') {
+            return target.hitsMax;
+        } else {
+            // If it's a low priority target, don't repair
+            if (strategyController.getRepairPriority(target) > 4) {
+                return 0;
+            }
+            return strategyController.getRepairThreshold(target);
+        }
+    }
 };
 
 module.exports = roleRepairer;

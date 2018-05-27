@@ -21,7 +21,7 @@ module.exports.loop = function () {
 
     spawnController.manageSpawns();
 
-	creepManager.manageCreeps();
+    creepManager.manageCreeps();
 
-	towerController.manageTowers();
+    towerController.manageTowers();
 };

@@ -14,18 +14,18 @@ var roleGuard = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-		var targets = strategyController.findHostileCreepsInRange(creep, 1);
+        var targets = strategyController.findHostileCreepsInRange(creep, 1);
 
-		if (targets.length > 0) {
-			creep.attack(targets[0]);
-			creep.say('attack');
-			return true;
-		}
+        if (targets.length > 0) {
+            creep.attack(targets[0]);
+            creep.say('attack');
+            return true;
+        }
 
-		if (creep.goToAssignedPos()) {
-			return true;
-		}
-		return false;
+        if (creep.goToAssignedPos()) {
+            return true;
+        }
+        return false;
     }
 };
 

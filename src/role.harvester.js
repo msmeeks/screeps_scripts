@@ -23,7 +23,7 @@ var roleHarvester = {
             return false;
         }
     },
-    
+
     /**
      * @param {Creep} creep
      * @param {Structure} target
@@ -33,7 +33,7 @@ var roleHarvester = {
             creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     },
-    
+
     /** @param {Creep} creep **/
     getHarvestTarget: function(creep) {
         var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
@@ -42,7 +42,7 @@ var roleHarvester = {
                     structure.energy < structure.energyCapacity;
             }
         });
-            
+
         return target;
     }
 };

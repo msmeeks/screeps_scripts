@@ -16,9 +16,9 @@ var roleCollector = {
         }
 
         // if not at assigned pos, go to assigned pos
-		if (creep.goToAssignedPos()) {
-			return true;
-		}
+        if (creep.goToAssignedPos()) {
+            return true;
+        }
 
         // clear assigned pos until collection is complete
         creep.setAssignedPos(undefined);

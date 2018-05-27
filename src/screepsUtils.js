@@ -8,13 +8,13 @@
  */
 
 var screepsUtils = {
-	roomPositionFromObject: function(object) {
-			if(object === undefined || _.isNaN(object.x) || _.isNaN(object.y) || !_.isString(object.roomName)) {
-				return undefined;
-			}
+    roomPositionFromObject: function(object) {
+            if(object === undefined || _.isNaN(object.x) || _.isNaN(object.y) || !_.isString(object.roomName)) {
+                return undefined;
+            }
 
-			return new RoomPosition(object.x, object.y, object.roomName);
-	}
+            return new RoomPosition(object.x, object.y, object.roomName);
+    }
 };
 
 module.exports = screepsUtils;
