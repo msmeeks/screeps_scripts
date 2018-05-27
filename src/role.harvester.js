@@ -36,6 +36,18 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     getHarvestTarget: function(creep) {
+        // If the creep's role is harvester, prioritize towers
+        if (creep.role == 'harvester') {
+            var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                }
+            });
+            if (target) {
+                return target;
+            }
+        }
+
         var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_TOWER) &&
