@@ -33,14 +33,14 @@ var towerController = {
         // else if my structures in optimal repair range need repair, repair them
         this.repairMyStructuresInRange(tower, this.optimalRange) ||
 
+        // else if hostiles in max attack range, attack them
+        this.attackHostileUnitsInRange(tower, this.maximumRange) ||
+
         // else if my units in effective heal range are hurt, heal them
         this.healMyCreepsInRange(tower, this.effectiveRange) ||
 
         // else if allies in optimal heal range are hurt, heal them
         this.healAlliedCreepsInRange(tower, this.optimalRange) ||
-
-        // else if hostiles in max attack range, attack them
-        this.attackHostileUnitsInRange(tower, this.maximumRange) ||
 
         // else if my units in max heal range are hurt, heal them
         this.healMyCreepsInRange(tower, this.maximumRange) ||
@@ -53,7 +53,6 @@ var towerController = {
     },
 
     attackHostileUnitsInRange: function(tower, range) {
-        return false;
         var hostiles = strategyController.findHostileCreepsInRange(tower, range);
         if (hostiles.length > 0) {
             // order by damage
