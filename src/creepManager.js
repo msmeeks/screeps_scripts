@@ -5,6 +5,7 @@ var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
 var roleRepairer = require('role.repairer');
 var roleMiner = require('role.miner');
+var roleCollector = require('role.collector');
 var roleGuard = require('role.guard');
 
 /*
@@ -30,6 +31,9 @@ var creepManager = {
 				case 'miner':
 					this.manageMiner(creep);
 					break;
+				case 'collector':
+					this.manageCollector(creep);
+					break;
 				case 'guard':
 					this.manageGuard(creep);
 					break;
@@ -54,7 +58,7 @@ var creepManager = {
         if(creep.memory.role == 'upgrader') {
             engaged = roleUpgrader.run(creep);
         }
-        
+
         // If the creep is not engaged in it's role, try other roles in priority order
         engaged = engaged ||
             roleHarvester.run(creep) ||
@@ -100,6 +104,11 @@ var creepManager = {
 		this.assignPosition(creep);
 
 		roleMiner.run(creep);
+	},
+
+    /** @param {Creep} creep **/
+	manageCollector: function(creep) {
+		roleCollector.run(creep);
 	}
 }
 

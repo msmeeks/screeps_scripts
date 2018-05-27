@@ -13,7 +13,7 @@ var spawnController = {
 		TEMPLATE_UNDEFINED: 2,
 		INSUFFICIENT_ENERGY_CAPACITY: 3
     },
-    
+
 	templates: {
 		worker: {
 			skillLevels: [
@@ -28,6 +28,15 @@ var spawnController = {
 				[WORK, WORK, CARRY, MOVE],
 				[WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE],
 				[WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
+			]
+		},
+
+		transporter: {
+			skillLevels: [
+				[CARRY, CARRY, CARRY, CARRY, MOVE, MOVE],
+				[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
+				[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+				[CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
 			]
 		},
 
@@ -53,8 +62,14 @@ var spawnController = {
         },
 		miner: {
 			name: 'miner',
-			minimumCount: function(spawn) {return spawn.room.memory.minerPositions && spawn.room.memory.minerPositions.length},
+			minimumCount: function(spawn) { return spawn.room.memory.minerPositions && spawn.room.memory.minerPositions.length; },
 			template: 'miner'
+		},
+		collector: {
+			name: 'collector',
+			minimumCount: 1,
+			template: 'transporter',
+            memory: function(spawn) { return {collectionPoints: spawn.room.collectionPoints}; }
 		},
         builder: {
             name: 'builder',
@@ -68,11 +83,11 @@ var spawnController = {
         },
 		guard: {
 			name: 'guard',
-			minimumCount: function(spawn) {return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length},
+			minimumCount: function(spawn) { return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length; },
 			template: 'guard'
 		}
     },
-    
+
 	manageSpawns: function() {
 		for (var spawnId in Game.spawns) {
 			this.manageSpawn(Game.spawns[spawnId]);
@@ -88,13 +103,13 @@ var spawnController = {
             this.replaceUnits(spawn) || this.upgradeUnits(spawn);
         }
     },
-    
+
     /** @param {Spawn} spawn **/
     replaceUnits: function(spawn) {
         for(var roleKey in this.roles) {
             var role = this.roles[roleKey];
             var units = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
-            
+
 			var minimumCount = role.minimumCount;
 			if (typeof role.minimumCount === 'function') {
 				minimumCount = role.minimumCount(spawn);
@@ -117,7 +132,7 @@ var spawnController = {
         for(var roleKey in this.roles) {
             var role = this.roles[roleKey];
             var units = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
-            
+
             for (var i = 0; i < units.length; i++) {
 				var unit = units[i];
 				var bodyCost = this.calculateBodyCost(unit.body);
@@ -134,16 +149,16 @@ var spawnController = {
         }
 		return false;
 	},
-    
+
     /**
-     * @param {Spawn} spawn 
+     * @param {Spawn} spawn
      * @param {String} role
     **/
     spawnUnit: function(spawn, role) {
         if (this.roles[role] === undefined) {
             return {succes: false, error: this.errors.ROLE_UNDEFINED};
         }
-        
+
 		var skills = this.getSkillsForRole(spawn, this.roles[role]);
 
 		if (!Array.isArray(skills)) {
@@ -156,12 +171,18 @@ var spawnController = {
 			return {success: true};
 		}
 
-        var newName = role + Game.time;
+        var memory = role.memory || {};
+        if (typeof role.memory === 'function') {
+            memory = role.memory(spawn);
+        }
+        memory.role = role;
+
+        var newName = role + '_' + spawn.name + '_' + Game.time;
         console.log('Spawning new ' + role + ': ' + newName);
         spawn.spawnCreep(
             skills,
             newName,
-            {memory: {role: role}}
+            {memory: memory}
         );
 
 		return {success: true};
