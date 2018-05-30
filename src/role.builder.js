@@ -75,9 +75,14 @@ var roleBuilder = {
 
     /** @param {Creep} creep **/
     getBuildTarget: function(creep) {
-        const targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+        // Get build targets from all rooms
+        var targets = [];
+        for (var roomKey in Game.rooms) {
+            var roomTargets = Game.rooms[roomKey].find(FIND_CONSTRUCTION_SITES);
+            targets = targets.concat(Game.rooms[roomKey].find(FIND_CONSTRUCTION_SITES));
+        }
 
-        // sort by repair score
+        // sort by build score
         targets.sort((a,b) => (this.getBuildScore(creep, a) - this.getBuildScore(creep, b)));
 
         return targets[0];
