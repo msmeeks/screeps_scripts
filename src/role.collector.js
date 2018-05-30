@@ -33,7 +33,6 @@ var roleCollector = {
             // assign next pos
             this.assignNextCollectionPoint(creep);
         }
-
     },
 
     assignNextCollectionPoint(creep) {
@@ -53,15 +52,11 @@ var roleCollector = {
      * @return {bool} true when the energy has been delivered, false otherwise
     **/
     deliverEnergy: function(creep) {
-        var storage = creep.room.find(FIND_STRUCTURES, {
-            filter: s => s.structureType == STRUCTURE_STORAGE
-        });
+        var storage = Game.structures[creep.memory.storage];
 
-        storage = storage && storage[0];
         if (!storage) {
             this.dropEverything(creep);
         }
-
 
         var result;
         for(const resourceType in creep.carry) {
@@ -98,19 +93,29 @@ var roleCollector = {
             return false;
         }
 
-        for(const resourceType in target.store) {
-            creep.withdraw(target, resourceType);
+        if (target instanceof Resource) {
+            creep.pickup(target);
+        } else if (target instanceof Structure) {
+            for(const resourceType in target.store) {
+                creep.withdraw(target, resourceType);
+            }
         }
+
         return true;
     },
 
     /** @param {Creep} creep **/
     getCollectionTarget: function(creep) {
-        var target = creep.pos.findInRange(FIND_STRUCTURES, 1, {
+        var target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1)
+        if (target) {
+            return target[0];
+        }
+
+        target = creep.pos.findInRange(FIND_STRUCTURES, 1, {
             filter: s => s.structureType == STRUCTURE_CONTAINER && _.sum(s.store) > 0
         });
 
-        return target[0];
+        return target && target[0];
     }
 };
 
