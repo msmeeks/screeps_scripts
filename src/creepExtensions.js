@@ -87,7 +87,7 @@ var creepExtensions = {
                     supplies = supplies.concat(creep.room.find(FIND_STRUCTURES, {filter: x => (x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_STORAGE) && x.store[RESOURCE_ENERGY] > 0}));
                 }
 
-                if (!supplyType || supplyType == FIND_SOURCES) {
+                if ((!supplyType && !supplies) || supplyType == FIND_SOURCES) {
                     var s = creep.room.find(FIND_SOURCES, {filter: (src) => src.energy > 0});
                     supplies = supplies.concat(creep.room.find(FIND_SOURCES, {filter: (src) => src.energy > 0}));
                 }
@@ -97,6 +97,24 @@ var creepExtensions = {
 
                 return supplies[0];
             };
+
+            var setGatherTarget = function(creep, target) {
+                // Add this creep to the list of gatherers on the target
+                console.log('target: ' + target);
+                JSON.stringify('memory: ' + target.memory);
+                target.memory.gatherers = target.memory.gatherers || [];
+                target.memory.gatherers.push(this.id);
+                target.memory = target.memory;
+                // Remove this creep from the list of gatherers on the old target
+                var oldTarget = Game.structures[this.memory.gatheringTarget];
+                if (oldTarget) {
+                    oldTarget.memory.gatherers = oldTarget.memory.gatherers || [];
+                    _.remove(oldTarget.memory.gatherers, x => x == this.id);
+                    oldTarget.memory = oldTarget.memory;
+                }
+                // Set the gathering target for this creep
+                this.memory.gatheringTarget = target && target.id;
+            }
 
             var gatherFromSupply = function(creep, supply) {
                 switch (getSupplyType(supply)) {
@@ -112,8 +130,6 @@ var creepExtensions = {
             };
 
             var target = getGatherTarget(this, targetType);
-
-            this.memory.gatheringTarget = target && target.id;
 
             if (!target) {
                 return false;
