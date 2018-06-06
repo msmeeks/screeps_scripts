@@ -78,18 +78,18 @@ var creepExtensions = {
                 // get all available supplys of energy
                 var supplies = [];
                 if (!supplyType || supplyType == FIND_DROPPED_RESOURCES) {
-                    s = creep.room.find(FIND_DROPPED_RESOURCES, {filter: x => x.resourceType == RESOURCE_ENERGY && x.room.name == creep.room.name});
-                    supplies = supplies.concat(creep.room.find(FIND_DROPPED_RESOURCES, {filter: x => x.resourceType == RESOURCE_ENERGY && x.room.name == creep.room.name}));
+                    var s = creep.room.find(FIND_DROPPED_RESOURCES, {filter: x => x.resourceType == RESOURCE_ENERGY && x.amount > 0});
+                    supplies = supplies.concat(s);
                 }
 
                 if (!supplyType || supplyType == FIND_STRUCTURES) {
                     var s = creep.room.find(FIND_STRUCTURES, {filter: x => (x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_STORAGE) && x.store[RESOURCE_ENERGY] > 0});
-                    supplies = supplies.concat(creep.room.find(FIND_STRUCTURES, {filter: x => (x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_STORAGE) && x.store[RESOURCE_ENERGY] > 0}));
+                    supplies = supplies.concat(s);
                 }
 
-                if ((!supplyType && !supplies) || supplyType == FIND_SOURCES) {
+                if ((!supplyType || !supplies) || supplyType == FIND_SOURCES) {
                     var s = creep.room.find(FIND_SOURCES, {filter: (src) => src.energy > 0});
-                    supplies = supplies.concat(creep.room.find(FIND_SOURCES, {filter: (src) => src.energy > 0}));
+                    supplies = supplies.concat(s);
                 }
 
                 // sort supplies by score
