@@ -119,6 +119,10 @@ var spawnController = {
             var spawningCreep = Game.creeps[spawn.spawning.name];
             spawn.say('🛠️' + spawningCreep.memory.role);
         } else {
+            var roomHasHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester').length > 0;
+            var availableCapacity = roomHasHarvesters ? spawn.room.energyCapacityAvailable : spawn.room.energyAvailable;
+            spawn.memory.availableCapacity = availableCapacity
+
             this.replaceUnits(spawn) || this.upgradeUnits(spawn);
         }
     },
@@ -220,13 +224,10 @@ var spawnController = {
 
         var levels = template.skillLevels;
 
-        var roomHasHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester').length > 0;
-        var availableCapacity = roomHasHarvesters ? spawn.room.energyCapacityAvailable : spawn.room.energyAvailable;
-
         for (var i = levels.length-1; i >= 0; i--) {
             var skills = levels[i];
             var energyRequired = this.calculateBodyCost(skills);
-            if (availableCapacity >= energyRequired) {
+            if (spawn.memory.availableCapacity >= energyRequired) {
                 return skills;
             }
         }
@@ -235,7 +236,7 @@ var spawnController = {
     },
 
     calculateBodyCost: function(parts) {
-        return parts.reduce(function (cost, part) {
+        return _.reduce(parts, function (cost, part) {
             return cost + BODYPART_COST[part.type || part];
         }, 0);
     }
