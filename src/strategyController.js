@@ -21,10 +21,10 @@ var strategyController = (function() {
                 2: 5000,
                 3: 25000,
                 4: 100000,
-                5: 1000000,
-                6: 10000000,
-                7: 50000000,
-                8: 100000000
+                5: 250000,
+                6: 500000,
+                7: 1000000,
+                8: 3000000
             },
 
             getRepairThreshold: function(target) {
