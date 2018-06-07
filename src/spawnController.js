@@ -119,9 +119,7 @@ var spawnController = {
             var spawningCreep = Game.creeps[spawn.spawning.name];
             spawn.say('🛠️' + spawningCreep.memory.role);
         } else {
-            var roomHasHarvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester').length > 0;
-            var availableCapacity = roomHasHarvesters ? spawn.room.energyCapacityAvailable : spawn.room.energyAvailable;
-            spawn.memory.availableCapacity = availableCapacity
+            spawn.memory.availableCapacity = spawn.room.energyAvailable;
 
             this.replaceUnits(spawn) || this.upgradeUnits(spawn);
         }
