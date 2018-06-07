@@ -20,6 +20,7 @@ var roleRepairer = {
 
         if(this.getRepairingTarget(creep) && creep.carry.energy == 0) {
             this.setRepairingTarget(creep, null);
+            creep.setGatheringTarget(null);
             creep.say('🔄 harvest');
         }
 

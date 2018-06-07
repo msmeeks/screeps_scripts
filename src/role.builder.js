@@ -21,6 +21,7 @@ var roleBuilder = {
 
         if(this.getBuildingTarget(creep) && creep.carry.energy == 0) {
             this.setBuildingTarget(creep, false);
+            creep.setGatheringTarget(null);
             creep.say('🔄 harvest');
         }
 

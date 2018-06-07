@@ -11,7 +11,23 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        var target = this.getHarvestTarget(creep);
+        var target = this.getDeliverTarget(creep);
+        if (!target) {
+            this.setDeliveringTarget(creep, false);
+            return false;
+        }
+
+        if(this.getDeliveringTarget(creep) && creep.carry.energy == 0) {
+            this.setDeliveringTarget(creep, false);
+            creep.setGatheringTarget(null);
+            creep.say('🔄 harvest');
+        }
+
+        if(!this.getDeliveringTarget(creep) && creep.carry.energy == creep.carryCapacity) {
+            this.setDeliveringTarget(creep, target);
+            creep.say('🚧 deliver');
+        }
+
         if(target) {
             if(creep.carry.energy < Math.min(creep.carryCapacity, target.energyCapacity)) {
                 creep.gatherEnergy();
@@ -22,6 +38,15 @@ var roleHarvester = {
         } else {
             return false;
         }
+    },
+
+    setDeliveringTarget: function (creep, target) {
+        var targetId = target && target.id;
+        creep.memory.delivering = targetId;
+    },
+
+    getDeliveringTarget: function (creep) {
+        return creep.memory.delivering && Game.getObjectById(creep.memory.delivering);
     },
 
     /**
@@ -35,7 +60,7 @@ var roleHarvester = {
     },
 
     /** @param {Creep} creep **/
-    getHarvestTarget: function(creep) {
+    getDeliverTarget: function(creep) {
         // If the creep's role is harvester, prioritize towers
         if (creep.role == 'harvester') {
             var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {

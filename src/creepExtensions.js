@@ -12,6 +12,41 @@ var screepsUtils = require('screepsUtils');
 var creepExtensions = {
     apply: function() {
 
+        Creep.prototype.setGatheringTarget = function(target) {
+            if (!target) {
+                this.memory.gatheringTarget = null;
+                return;
+            }
+
+            // If the targt hasn't changed, don't do anything
+            var oldTarget = this.getGatheringTarget();
+            if (oldTarget && oldTarget.id == target.id) {
+                return;
+            }
+
+        /* TODO: Consider implementing some mecahnism to track gatherers on the supply and score based on that
+            // Add this creep to the list of gatherers on the target
+            console.log('target: ' + target);
+            JSON.stringify('memory: ' + target.memory);
+            target.memory.gatherers = target.memory.gatherers || [];
+            target.memory.gatherers.push(this.id);
+            target.memory = target.memory;
+
+            // Remove this creep from the list of gatherers on the old target
+            if (oldTarget) {
+                oldTarget.memory.gatherers = oldTarget.memory.gatherers || [];
+                _.remove(oldTarget.memory.gatherers, x => x == this.id);
+                oldTarget.memory = oldTarget.memory;
+            }
+        */
+            // Set the gathering target for this creep
+            this.memory.gatheringTarget = target && target.id;
+        };
+
+        Creep.prototype.getGatheringTarget = function() {
+            return this.memory.gatheringTarget && Game.getObjectById(this.memory.gatheringTarget);
+        };
+
         Creep.prototype.gatherEnergy = function (targetType) {
 
             var getSupplyType = function (supply) {
@@ -67,14 +102,19 @@ var creepExtensions = {
                 var priorityFactor = 1000;
                 var priorityComponent = priorityFactor * getSupplyPriority(target);
 
-                var stickinessFactor = 1000;
-                var stickinessComponent = stickinessFactor * creep.memory.gatheringTarget == target.id ? 1 : 0;
-
-                var score = -getSupplyAmount(target) + distanceComponent + priorityComponent - stickinessComponent;
+                var score = -getSupplyAmount(target) + distanceComponent + priorityComponent;
                 return score;
             };
 
             var getGatherTarget = function(creep, supplyType) {
+                // if the creep already has a gather target and it's still valid, just use that target
+                var target = creep.getGatheringTarget();
+                if (target && getSupplyAmount(target) > 0) {
+                    return target;
+                } else {
+                    creep.setGatheringTarget(null);
+                }
+
                 // get all available supplys of energy
                 var supplies = [];
                 if (!supplyType || supplyType == FIND_DROPPED_RESOURCES) {
@@ -98,24 +138,6 @@ var creepExtensions = {
                 return supplies[0];
             };
 
-            var setGatherTarget = function(creep, target) {
-                // Add this creep to the list of gatherers on the target
-                console.log('target: ' + target);
-                JSON.stringify('memory: ' + target.memory);
-                target.memory.gatherers = target.memory.gatherers || [];
-                target.memory.gatherers.push(this.id);
-                target.memory = target.memory;
-                // Remove this creep from the list of gatherers on the old target
-                var oldTarget = Game.structures[this.memory.gatheringTarget];
-                if (oldTarget) {
-                    oldTarget.memory.gatherers = oldTarget.memory.gatherers || [];
-                    _.remove(oldTarget.memory.gatherers, x => x == this.id);
-                    oldTarget.memory = oldTarget.memory;
-                }
-                // Set the gathering target for this creep
-                this.memory.gatheringTarget = target && target.id;
-            }
-
             var gatherFromSupply = function(creep, supply) {
                 switch (getSupplyType(supply)) {
                     case 'Resource':
@@ -135,6 +157,7 @@ var creepExtensions = {
                 return false;
             }
 
+            this.setGatheringTarget(target);
             var result = gatherFromSupply(this, target);
 
             if (result == undefined) {
