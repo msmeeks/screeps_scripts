@@ -103,7 +103,7 @@ var creepExtensions = {
                 var priorityComponent = priorityFactor * getSupplyPriority(target);
 
                 var amountFactor = 500;
-                var ammountComponent = 0;
+                var amountComponent = 0;
                 var amount = getSupplyAmount(target);
                 if (amount >= creep.carryCapacity) {
                     amountComponent = 2;
