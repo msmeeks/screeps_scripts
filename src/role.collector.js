@@ -83,11 +83,12 @@ var roleCollector = {
      * @return {bool} true if there is something to collect, false if there is nothing to collect or no more space
      **/
     collectResources: function(creep) {
-        if (creep.carry.energy >= creep.carryCapacity) {
+        var totalAmountCarried = _.sum(creep.carry);
+
+        if (totalAmountCarried >= creep.carryCapacity) {
             return false;
         }
 
-        // TODO: Collect dropped resources
         var target = this.getCollectionTarget(creep);
         if (!target) {
             return false;
@@ -107,7 +108,7 @@ var roleCollector = {
     /** @param {Creep} creep **/
     getCollectionTarget: function(creep) {
         var target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1)
-        if (target) {
+        if (target && target.length > 0) {
             return target[0];
         }
 
