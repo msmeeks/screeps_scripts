@@ -129,7 +129,7 @@ var spawnController = {
     replaceUnits: function(spawn) {
         for(var roleKey in this.roles) {
             var role = this.roles[roleKey];
-            var units = _.filter(Game.creeps, (creep) => creep.memory.role == role.name);
+            var units = _.filter(Game.creeps, (creep) => creep.memory.role == role.name && creep.memory.homeBase == spawn.room.name);
 
             var minimumCount = role.minimumCount;
             if (typeof role.minimumCount === 'function') {
@@ -197,6 +197,7 @@ var spawnController = {
             memory = memory(spawn);
         }
         memory.role = role;
+		memory.homeBase = spawn.room.name;
 
         var newName = role + '_' + spawn.name + '_' + Game.time;
         console.log('Spawning new ' + role + ': ' + newName);
