@@ -20,6 +20,11 @@ var roleClaimer = {
 
         var target = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTROLLER})[0];
 
+        if (!target) {
+            console.log('No target in range for ' + creep);
+            return;
+        }
+
         // If it's already mine, log an error and exit
         if (target.my) {
             console.log('Controller assigned to ' + creep + ' already claimed');
