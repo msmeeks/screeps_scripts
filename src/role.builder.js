@@ -80,7 +80,7 @@ var roleBuilder = {
         var targets = [];
         for (var roomKey in Game.rooms) {
             var roomTargets = Game.rooms[roomKey].find(FIND_CONSTRUCTION_SITES);
-            targets = targets.concat(Game.rooms[roomKey].find(FIND_CONSTRUCTION_SITES));
+            targets = targets.concat(roomTargets);
         }
 
         // sort by build score
