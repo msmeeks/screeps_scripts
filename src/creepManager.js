@@ -72,6 +72,8 @@ var creepManager = {
 
         if(!engaged) {
             console.log(creep.name + ' not engaged');
+            creep.say('going home');
+            creep.moveTo(new RoomPosition(25, 25, creep.memory.homeBase));
         }
     },
 

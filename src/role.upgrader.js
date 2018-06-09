@@ -11,6 +11,11 @@ var roleUpgrader = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        // If the room is not in my controller, return false
+        if (!creep.room.controller.my) {
+            creep.memory.upgrading = false;
+            return false;
+        }
 
         if(creep.memory.upgrading && creep.carry.energy == 0) {
             creep.memory.upgrading = false;
