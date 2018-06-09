@@ -85,7 +85,7 @@ var spawnController = {
         },
         collector: {
             name: 'collector',
-            minimumCount: function(spawn) {return Math.ceil(spawn.room.memory.collectionPoints.length / 3.0)},
+            minimumCount: 1,
             template: 'transporter',
             memory: function(spawn) {
                 var storage = spawn.room.find(FIND_STRUCTURES, { filter: s => s.structureType == STRUCTURE_STORAGE });
