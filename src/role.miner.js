@@ -23,7 +23,7 @@ var roleMiner = {
         }
 
         if(creep.carry.energy < creep.carryCapacity) {
-            var target = creep.pos.findInRange(FIND_SOURCES, 1)[0];
+            var target = creep.pos.findInRange(FIND_MINERALS, 1)[0] || creep.pos.findInRange(FIND_SOURCES, 1)[0];
             creep.harvest(target);
         } else {
             this.depositEnergy(creep);
