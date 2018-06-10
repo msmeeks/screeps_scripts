@@ -73,16 +73,25 @@ var spawnController = {
             minimumCount: 2,
             template: 'worker'
         },
+
         upgrader: {
             name: 'upgrader',
             minimumCount: 1,
             template: 'worker'
         },
+
         miner: {
             name: 'miner',
             minimumCount: function(spawn) { return spawn.room.memory.minerPositions && spawn.room.memory.minerPositions.length; },
             template: 'miner'
         },
+
+        distributor: {
+            name: 'distributor',
+            minimumCount: function(spawn) { return spawn.room.memory.minerPositions ? 1 : 0},
+            template: 'transporter'
+        },
+
         collector: {
             name: 'collector',
             minimumCount: function(spawn) { return spawn.room.memory.collectionPoints ? 1 : 0},
@@ -93,21 +102,25 @@ var spawnController = {
                 return {collectionPoints: spawn.room.memory.collectionPoints, storage: storage};
             }
         },
+
         builder: {
             name: 'builder',
             minimumCount: 2,
             template: 'worker'
         },
+
         repairer: {
             name: 'repairer',
             minimumCount: 1,
             template: 'worker'
         },
+
         guard: {
             name: 'guard',
             minimumCount: function(spawn) { return spawn.room.memory.guardPositions && spawn.room.memory.guardPositions.length; },
             template: 'guard'
         },
+
         claimer: {
             name: 'claimer',
             minimumCount: function(spawn) { return spawn.room.memory.claimerPositions && spawn.room.memory.claimerPositions.length; },

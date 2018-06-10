@@ -41,6 +41,9 @@ var creepManager = {
                 case 'collector':
                     this.manageCollector(creep);
                     break;
+                case 'distributor':
+                    this.manageDistributor(creep);
+                    break;
                 default:
                     console.log('Unrecognized role ' + creep.memory.role + ' for creep ' + creep.name);
             }
@@ -118,6 +121,11 @@ var creepManager = {
     /** @param {Creep} creep **/
     manageCollector: function(creep) {
         roleCollector.run(creep);
+    },
+
+    /** @param {Creep} creep **/
+    manageDistributor: function(creep) {
+        roleHarvester.run(creep);
     }
 }
 

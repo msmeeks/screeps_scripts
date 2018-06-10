@@ -29,8 +29,11 @@ var roleHarvester = {
         }
 
         if(target) {
-            if(creep.carry.energy < Math.min(creep.carryCapacity, target.energyCapacity)) {
+            // If there is a valid target and the creep is not delivering, gather energy
+            // This will ensure the creep will fill up before making deliveries
+            if(!this.getDeliveringTarget(creep)) {
                 creep.gatherEnergy();
+            // If there is a valid target and the creep is delivering, deliver
             } else {
                 this.deliverEnergy(creep, target);
             }
@@ -61,6 +64,7 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     getDeliverTarget: function(creep) {
+        // TODO: Support multiple rooms
         var target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN || structure.structureType == STRUCTURE_TOWER) &&
