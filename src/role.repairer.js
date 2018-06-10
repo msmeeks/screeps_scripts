@@ -10,9 +10,17 @@ var strategyController = require('strategyController');
  */
 
 var roleRepairer = {
-    /** @param {Creep} creep **/
-    run: function(creep) {
-        var target = this.getRepairTarget(creep);
+    selectionStrategies: {
+        IN_ROOM: 'IN_ROOM',
+        IN_PLACE: 'IN_PLACE',
+    },
+
+    /**
+    * @param {Creep} creep
+    * @param {string} selectionStrategy
+    **/
+    run: function(creep, selectionStrategy = this.selectionStrategies.IN_ROOM) {
+        var target = this.getRepairTarget(creep, selectionStrategy);
         if (!target) {
             this.setRepairingTarget(creep, null);
             return false;
@@ -61,7 +69,7 @@ var roleRepairer = {
 
     getRepairingTarget: function (creep) {
         return creep.memory.repairing;
-        // FIXME
+        // FIXME: use Game.getObjectById
         return creep.memory.repairing && Game.structures[creep.memory.repairing];
     },
 
@@ -75,11 +83,21 @@ var roleRepairer = {
         }
     },
 
-    /** @param {Creep} creep **/
-    getRepairTarget: function(creep) {
-        const targets = creep.room.find(FIND_STRUCTURES, {
-            filter: object => object.hits < this.getRepairThreshold(creep, object)
-        });
+    /**
+    * @param {Creep} creep
+    * @param {string} selectionStrategy
+    **/
+    getRepairTarget: function(creep, selectionStrategy = this.selectionStrategies.IN_ROOM) {
+        selectionStrategy = this.selectionStrategies[selectionStrategy] || this.selectionStrategies.global;
+        var targets = [];
+
+        if (selectionStrategy == this.selectionStrategies.IN_PLACE) {
+            targets = creep.pos.findInRange(FIND_CONSTRUCTION_SITES, creep.REPAIR_RANGE);
+        } else if (selectionStrategy == this.selectionStrategies.IN_ROOM) {
+            targets = creep.room.find(FIND_STRUCTURES, {
+                filter: object => object.hits < this.getRepairThreshold(creep, object)
+            });
+        }
 
         // sort by repair score
         targets.sort((a,b) => (this.getRepairScore(creep, a) - this.getRepairScore(creep, b)));

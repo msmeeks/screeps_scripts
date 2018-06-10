@@ -1,3 +1,6 @@
+var roleBuilder = require('role.builder');
+var roleRepairer = require('role.repairer');
+
 /*
  * Module code goes here. Use 'module.exports' to export things:
  * module.exports.thing = 'a thing';
@@ -12,6 +15,10 @@ var roleMiner = {
     /** @param {Creep} creep **/
     run: function(creep) {
         if (creep.goToAssignedPos()) {
+            return true;
+        }
+
+        if (this.doMaintenance(creep)) {
             return true;
         }
 
@@ -45,6 +52,19 @@ var roleMiner = {
         });
 
         return target[0];
+    },
+
+    doMaintenance: function(creep) {
+        if (creep.memory.sourcesInRange === undefined) {
+            creep.memory.sourcesInRange = creep.pos.findInRange(FIND_SOURCES, 1).length > 0;
+        }
+
+        if (!creep.memory.sourcesInRange) {
+            return false;
+        }
+
+        return roleBuilder.run(creep, roleBuilder.selectionStrategies.IN_PLACE) ||
+               roleRepairer.run(creep, roleRepairer.selectionStrategies.IN_PLACE);
     }
 };
 

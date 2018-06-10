@@ -10,10 +10,17 @@ var strategyController = require('strategyController');
  */
 
 var roleBuilder = {
+    selectionStrategies: {
+        GLOBAL: 'GLOBAL',
+        IN_PLACE: 'IN_PLACE',
+    },
 
-    /** @param {Creep} creep **/
-    run: function(creep) {
-        var target = this.getBuildTarget(creep);
+    /**
+    * @param {Creep} creep
+    * @param {string} selectionStrategy
+    **/
+    run: function(creep, selectionStrategy = this.selectionStrategies.GLOBAL) {
+        var target = this.getBuildTarget(creep, selectionStrategy);
         if (!target) {
             this.setBuildingTarget(creep, false);
             return false;
@@ -74,13 +81,22 @@ var roleBuilder = {
         return progressRemaining + distanceComponent + priorityComponent - stickinessComponent;;
     },
 
-    /** @param {Creep} creep **/
-    getBuildTarget: function(creep) {
-        // Get build targets from all rooms
+    /**
+    * @param {Creep} creep
+    * @param {string} selectionStrategy
+    **/
+    getBuildTarget: function(creep, selectionStrategy = this.selectionStrategies.GLOBAL) {
+        selectionStrategy = this.selectionStrategies[selectionStrategy] || this.selectionStrategies.global;
         var targets = [];
-        for (var roomKey in Game.rooms) {
-            var roomTargets = Game.rooms[roomKey].find(FIND_CONSTRUCTION_SITES);
-            targets = targets.concat(roomTargets);
+
+        if (selectionStrategy == this.selectionStrategies.IN_PLACE) {
+            targets = creep.pos.findInRange(FIND_CONSTRUCTION_SITES, creep.BUILD_RANGE);
+        } else if (selectionStrategy == this.selectionStrategies.GLOBAL) {
+            // Get build targets from all rooms
+            for (var roomKey in Game.rooms) {
+                var roomTargets = Game.rooms[roomKey].find(FIND_CONSTRUCTION_SITES);
+                targets = targets.concat(roomTargets);
+            }
         }
 
         // sort by build score
