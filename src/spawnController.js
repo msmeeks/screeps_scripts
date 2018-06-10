@@ -98,7 +98,8 @@ var spawnController = {
             template: 'transporter',
             memory: function(spawn) {
                 var storage = spawn.room.find(FIND_STRUCTURES, { filter: s => s.structureType == STRUCTURE_STORAGE });
-                storage = storage && storage[0].id;
+                // If there is a storage use that, otherwise use the spawn as the storage destination
+                storage = storage.length > 0 ? storage[0].id : spawn.id;
                 return {collectionPoints: spawn.room.memory.collectionPoints, storage: storage};
             }
         },
