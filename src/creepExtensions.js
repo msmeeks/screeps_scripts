@@ -12,8 +12,8 @@ var screepsUtils = require('screepsUtils');
 var creepExtensions = {
     apply: function() {
 
-		Creep.prototype.BUILD_RANGE = 3,
-		Creep.prototype.REPAIR_RANGE = 3,
+        Creep.prototype.BUILD_RANGE = 3,
+        Creep.prototype.REPAIR_RANGE = 3,
 
         Creep.prototype.setGatheringTarget = function(target) {
             if (!target) {
