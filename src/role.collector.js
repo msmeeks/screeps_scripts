@@ -113,7 +113,7 @@ var roleCollector = {
         }
 
         target = creep.pos.findInRange(FIND_STRUCTURES, 1, {
-            filter: s => s.structureType == STRUCTURE_CONTAINER && _.sum(s.store) > 0
+            filter: s => (s.structureType == STRUCTURE_CONTAINER || s.structureType == STRUCTURE_STORAGE) && _.sum(s.store) > 0
         });
 
         return target && target[0];
