@@ -143,17 +143,18 @@ var spawnController = {
         } else {
             spawn.memory.availableCapacity = spawn.room.energyAvailable;
 
-            var units = _.filter(Game.creeps, (creep) => creep.memory.role == role.name && creep.memory.homeBase == spawn.room.name);
-
-            this.replaceUnits(spawn, units) || this.upgradeUnits(spawn, units);
+            this.replaceUnits(spawn) || this.upgradeUnits(spawn);
         }
+    },
+
+    getUnitsByRoleAndHomeBase: function(spawn, roleName) {
+        return _.filter(Game.creeps, (creep) => creep.memory.role == roleName && creep.memory.homeBase == spawn.room.name);
     },
 
     /**
     * @param {Spawn} spawn
-    * @param {[Creep] units
     **/
-    replaceUnits: function(spawn, units) {
+    replaceUnits: function(spawn) {
         for(var roleKey in this.roles) {
             var role = this.roles[roleKey];
 
@@ -161,6 +162,8 @@ var spawnController = {
             if (typeof role.minimumCount === 'function') {
                 minimumCount = role.minimumCount(spawn);
             }
+
+            var units = this.getUnitsByRoleAndHomeBase(spawn, role.name);
 
             if (units.length < minimumCount) {
                 var result = this.spawnUnit(spawn, role.name);
@@ -176,11 +179,12 @@ var spawnController = {
 
     /**
     * @param {Spawn} spawn
-    * @param {[Creep] units
     **/
-    upgradeUnits: function(spawn, units) {
+    upgradeUnits: function(spawn) {
         for(var roleKey in this.roles) {
             var role = this.roles[roleKey];
+
+            var units = this.getUnitsByRoleAndHomeBase(spawn, role.name);
 
             for (var i = 0; i < units.length; i++) {
                 var unit = units[i];
