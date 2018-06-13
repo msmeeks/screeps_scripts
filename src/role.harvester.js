@@ -11,6 +11,14 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        if (creep.memory.role != 'distributor') {
+            var minerIsPresent = creep.room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'miner'}).length > 0;
+            var distributorIsPresent = creep.room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'distributor'}).length > 0;
+            if (minerIsPresent && distributorIsPresent) {
+                return false;
+            }
+        }
+
         var target = this.getDeliverTarget(creep);
         if (!target) {
             this.setDeliveringTarget(creep, false);
