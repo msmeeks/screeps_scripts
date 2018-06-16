@@ -22,24 +22,14 @@ var roleMiner = {
             return true;
         }
 
-        if(creep.carry.energy < creep.carryCapacity) {
+        if(_.sum(creep.carry) < creep.carryCapacity) {
             var target = creep.pos.findInRange(FIND_MINERALS, 1)[0] || creep.pos.findInRange(FIND_SOURCES, 1)[0];
             creep.harvest(target);
         } else {
-            this.depositEnergy(creep);
+            var target = this.getDepositTarget(creep);
+            creep.transferEverything(target);
         }
         return true;
-    },
-
-    /**
-     * @param {Creep} creep
-     * @param {Structure} target
-    **/
-    depositEnergy: function(creep) {
-        var target = this.getDepositTarget(creep);
-        if(creep.transfer(target, RESOURCE_ENERGY) != OK) {
-            creep.drop(RESOURCE_ENERGY);
-        }
     },
 
     /** @param {Creep} creep **/
