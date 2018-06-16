@@ -140,7 +140,7 @@ var creepExtensions = {
                     supplies = supplies.concat(s);
                 }
 
-                if ((!supplyType || !supplies) || supplyType == FIND_SOURCES) {
+                if (((!supplyType || !supplies) || supplyType == FIND_SOURCES) && creep.body.find(p => p.type == WORK)) {
                     var s = creep.room.find(FIND_SOURCES, {filter: (src) => src.energy > 0});
                     supplies = supplies.concat(s);
                 }
