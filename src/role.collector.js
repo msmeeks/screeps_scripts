@@ -29,7 +29,7 @@ var roleCollector = {
         }
 
         // if done collecting, deposit at storage
-        if (this.deliverEnergy(creep)) {
+        if (this.deliverEverything(creep)) {
             // assign next pos
             this.assignNextCollectionPoint(creep);
         }
@@ -51,7 +51,7 @@ var roleCollector = {
      * @param {Creep} creep
      * @return {bool} true when the energy has been delivered, false otherwise
     **/
-    deliverEnergy: function(creep) {
+    deliverEverything: function(creep) {
         var storage = Game.structures[creep.memory.storage];
 
         if (!storage) {
@@ -69,7 +69,7 @@ var roleCollector = {
         } else if (result != OK) {
             this.dropEverything(creep);
         }
-        return true;
+        return _.sum(creep.carry) == 0;
     },
 
     dropEverything: function(creep) {
