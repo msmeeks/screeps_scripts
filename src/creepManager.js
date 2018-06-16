@@ -57,7 +57,7 @@ var creepManager = {
             engaged = roleHarvester.run(creep);
         }
         if(creep.memory.role == 'builder') {
-            engaged = roleBuilder.run(creep);
+            engaged = roleBuilder.run(creep, roleBuilder.selectionStrategies.GLOBAL);
         }
         if(creep.memory.role == 'repairer') {
             engaged = roleRepairer.run(creep);
@@ -69,7 +69,7 @@ var creepManager = {
         // If the creep is not engaged in it's role, try other roles in priority order
         engaged = engaged ||
             roleHarvester.run(creep) ||
-            roleBuilder.run(creep) ||
+            roleBuilder.run(creep, roleBuilder.selectionStrategies.IN_ROOM) ||
             roleRepairer.run(creep) ||
             roleUpgrader.run(creep);
 

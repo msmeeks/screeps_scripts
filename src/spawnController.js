@@ -168,7 +168,7 @@ var spawnController = {
             if (units.length < minimumCount) {
                 var result = this.spawnUnit(spawn, role.name);
                 if (!result.success) {
-                    console.log('Failed to spawn ' + roleKey + '. Error code: ' + result.error);
+                   // console.log('Failed to spawn ' + roleKey + '. Error code: ' + result.error);
                 } else {
                     return true;
                 }
