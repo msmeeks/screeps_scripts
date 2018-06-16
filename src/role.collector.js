@@ -20,16 +20,16 @@ var roleCollector = {
             return true;
         }
 
-        // clear assigned pos until collection is complete
-        creep.setAssignedPos(undefined);
-
         // if at assigned pos, collect resources
-        if (this.collectResources(creep)) {
+        if (creep.getAssignedPos() && this.collectResources(creep)) {
             return true;
         }
 
-        // if done collecting, deposit at storage
-        if (this.deliverEverything(creep)) {
+        // if done collecting, clear assigned position and deposit at storage
+        creep.setAssignedPos(undefined);
+
+        var storage = Game.structures[creep.memory.storage];
+        if (creep.transferEverything(storage)) {
             // assign next pos
             this.assignNextCollectionPoint(creep);
         }
@@ -45,37 +45,6 @@ var roleCollector = {
         var collectingFrom = creep.memory.collectingFrom || 0;
         creep.memory.collectingFrom = (collectingFrom + 1) % collectionPoints.length;
         creep.setAssignedPos(collectionPoints[creep.memory.collectingFrom]);
-    },
-
-    /**
-     * @param {Creep} creep
-     * @return {bool} true when the energy has been delivered, false otherwise
-    **/
-    deliverEverything: function(creep) {
-        var storage = Game.structures[creep.memory.storage];
-
-        if (!storage) {
-            this.dropEverything(creep);
-        }
-
-        var result;
-        for(const resourceType in creep.carry) {
-            result = creep.transfer(storage, resourceType);
-        }
-
-        if(result == ERR_NOT_IN_RANGE) {
-            creep.moveTo(storage, {visualizePathStyle: {stroke: '#ffffff'}});
-            return false;
-        } else if (result != OK) {
-            this.dropEverything(creep);
-        }
-        return _.sum(creep.carry) == 0;
-    },
-
-    dropEverything: function(creep) {
-        for(const resourceType in creep.carry) {
-            creep.drop(resourceType);
-        }
     },
 
     /**

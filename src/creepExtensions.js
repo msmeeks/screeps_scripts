@@ -12,8 +12,14 @@ var screepsUtils = require('screepsUtils');
 var creepExtensions = {
     apply: function() {
 
-        Creep.prototype.BUILD_RANGE = 3,
-        Creep.prototype.REPAIR_RANGE = 3,
+        Creep.prototype.BUILD_RANGE = 3;
+        Creep.prototype.REPAIR_RANGE = 3;
+
+        Creep.prototype.log = function(msg, shouldLog=true) {
+            if (shouldLog) {
+                console.log(this + ' ' + msg);
+            }
+        };
 
         Creep.prototype.setGatheringTarget = function(target) {
             if (!target) {
@@ -184,6 +190,37 @@ var creepExtensions = {
             return true;
 
         };
+
+        Creep.prototype.dropEverything = function() {
+            for(const resourceType in this.carry) {
+                this.drop(resourceType);
+            }
+        };
+
+        /**
+         * @param {Structure|Crrep} target
+         * @return {bool} true when all the carried resources have been transfered to the target or the target or dropped it the target is full, false otherwise
+        **/
+        Creep.prototype.transferEverything = function(target) {
+
+            if (!target) {
+                this.dropEverything();
+            }
+
+            var result;
+            for(const resourceType in this.carry) {
+                result = this.transfer(target, resourceType);
+            }
+
+            if(result == ERR_NOT_IN_RANGE) {
+                this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                return false;
+            } else if (result != OK) {
+                this.dropEverything();
+            }
+
+            return _.sum(this.carry) == 0;
+        },
 
         Creep.prototype.getAssignedPos = function() {
             return screepsUtils.roomPositionFromObject(this.memory.assignedPos);
