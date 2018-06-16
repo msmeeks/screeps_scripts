@@ -125,6 +125,19 @@ var creepExtensions = {
                 return score;
             };
 
+            var isSupplyValid = function(supply) {
+                switch (getSupplyType(supply)) {
+                    case 'Resource':
+                        return supply.resourceType == RESOURCE_ENERGY && getSupplyAmount(supply) > 0;
+                    case 'Structure':
+                        return (supply.structureType == STRUCTURE_CONTAINER || supply.structureType == STRUCTURE_STORAGE) && getSupplyAmount(supply) > 0;
+                    case 'Source':
+                        return getSupplyAmount(supply) > 0;
+                    default:
+                        return false;
+                }
+            };
+
             var getGatherTarget = function(creep, supplyType) {
                 // if the creep already has a gather target and it's still valid, just use that target
                 var target = creep.getGatheringTarget();
@@ -137,17 +150,17 @@ var creepExtensions = {
                 // get all available supplys of energy
                 var supplies = [];
                 if (!supplyType || supplyType == FIND_DROPPED_RESOURCES) {
-                    var s = creep.room.find(FIND_DROPPED_RESOURCES, {filter: x => x.resourceType == RESOURCE_ENERGY && x.amount > 0});
+                    var s = creep.room.find(FIND_DROPPED_RESOURCES, { filter: isSupplyValid });
                     supplies = supplies.concat(s);
                 }
 
                 if (!supplyType || supplyType == FIND_STRUCTURES) {
-                    var s = creep.room.find(FIND_STRUCTURES, {filter: x => (x.structureType == STRUCTURE_CONTAINER || x.structureType == STRUCTURE_STORAGE) && x.store[RESOURCE_ENERGY] > 0});
+                    var s = creep.room.find(FIND_STRUCTURES, { filter: isSupplyValid });
                     supplies = supplies.concat(s);
                 }
 
-                if (((!supplyType || !supplies) || supplyType == FIND_SOURCES) && creep.body.find(p => p.type == WORK)) {
-                    var s = creep.room.find(FIND_SOURCES, {filter: (src) => src.energy > 0});
+                if ((!supplyType || supplyType == FIND_SOURCES || !supplies) && creep.body.find(p => p.type == WORK)) {
+                    var s = creep.room.find(FIND_SOURCES, { filter: isSupplyValid });
                     supplies = supplies.concat(s);
                 }
 
