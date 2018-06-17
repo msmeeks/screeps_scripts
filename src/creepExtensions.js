@@ -204,35 +204,46 @@ var creepExtensions = {
 
         };
 
+        /**
+         * @return {bool} true if the creep is dropping something this tick
+        **/
         Creep.prototype.dropEverything = function() {
             for(const resourceType in this.carry) {
-                this.drop(resourceType);
+                if (this.drop(resourceType) == OK) {
+                    return true;
+                }
             }
+            return false;
         };
 
         /**
+         * Attempts to transfer all resources the creep is carrying to the target.
+         * If the target is undefined or full, then drop the resources instead.
+         *
          * @param {Structure|Crrep} target
-         * @return {bool} true when all the carried resources have been transfered to the target or the target or dropped it the target is full, false otherwise
+         * @return {bool} true if the creep is busy transferring or dropping something this tick
         **/
         Creep.prototype.transferEverything = function(target) {
-
-            if (!target) {
-                this.dropEverything();
-            }
-
-            var result;
             for(const resourceType in this.carry) {
-                result = this.transfer(target, resourceType);
+                if (this.carry[resourceType] == 0) {
+                    continue;
+                }
+
+                if (!target) {
+                    return this.drop(resourceType);
+                }
+
+                var result = this.transfer(target, resourceType);
+
+                if(result == ERR_NOT_IN_RANGE) {
+                    this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                } else if (result != OK) {
+                    this.drop(resourceType);
+                }
+                return true;
             }
 
-            if(result == ERR_NOT_IN_RANGE) {
-                this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-                return false;
-            } else if (result != OK) {
-                this.dropEverything();
-            }
-
-            return _.sum(this.carry) == 0;
+            return false;
         },
 
         Creep.prototype.getAssignedPos = function() {
@@ -243,18 +254,34 @@ var creepExtensions = {
             this.memory.assignedPos = pos;
         };
 
-        Creep.prototype.goToAssignedPos = function() {
-            var assignedPos = screepsUtils.roomPositionFromObject(this.memory.assignedPos);
-            if (!assignedPos) {
-                return false;
-            }
-
-            if (!this.pos.isEqualTo(assignedPos)) {
-                this.moveTo(assignedPos, {visualizePathStyle: {stroke: '#ffffff'}});
+        /*
+         * @param {RoomPosition} targetPos the position to check
+         * @return {bool} true if the creep is at the target position or the position is null, otherwise false
+         */
+        Creep.prototype.isAtPosition = function(targetPos) {
+            if (!targetPos) {
                 return true;
             }
 
-            return false;
+            if (!this.pos.isEqualTo(targetPos)) {
+                return false;
+            }
+
+            return true;
+        };
+
+        /*
+         * Move to the creep's assigned position, if necessary
+         * @returns true if the creep needs to move to get to its assigned position
+         */
+        Creep.prototype.goToAssignedPos = function() {
+            var assignedPos = this.getAssignedPos();
+            if (this.isAtPosition(assignedPos)) {
+                return false;
+            }
+
+            this.moveTo(assignedPos, {visualizePathStyle: {stroke: '#ffffff'}});
+            return true;
         }
     }
 };
