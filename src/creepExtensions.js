@@ -132,7 +132,7 @@ var creepExtensions = {
                     case 'Structure':
                         return (supply.structureType == STRUCTURE_CONTAINER || supply.structureType == STRUCTURE_STORAGE) && getSupplyAmount(supply) > 0;
                     case 'Source':
-                        return getSupplyAmount(supply) > 0;
+                        return screepsUtils.sourceHasOpenAccessPoint(supply) && getSupplyAmount(supply) > 0;
                     default:
                         return false;
                 }
