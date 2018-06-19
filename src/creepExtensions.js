@@ -141,7 +141,7 @@ var creepExtensions = {
             var getGatherTarget = function(creep, supplyType) {
                 // if the creep already has a gather target and it's still valid, just use that target
                 var target = creep.getGatheringTarget();
-                if (target && getSupplyAmount(target) > 0) {
+                if (target && isSupplyValid(target)) {
                     return target;
                 } else {
                     creep.setGatheringTarget(null);
