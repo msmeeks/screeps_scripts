@@ -38,12 +38,12 @@ var roleHarvester = {
             // If there is a valid target and the creep is not delivering, gather energy
             // This will ensure the creep will fill up before making deliveries
             if(!this.getDeliveringTarget(creep)) {
-                creep.gatherEnergy();
+                return creep.gatherEnergy();
             // If there is a valid target and the creep is delivering, deliver
             } else {
                 this.deliverEnergy(creep, target);
+                return true;
             }
-            return true;
         } else {
             return false;
         }

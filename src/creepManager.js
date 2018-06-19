@@ -125,7 +125,8 @@ var creepManager = {
 
     /** @param {Creep} creep **/
     manageDistributor: function(creep) {
-        roleHarvester.run(creep);
+        // if there is no harvesting to do, collect
+        roleHarvester.run(creep) || roleCollector.run(creep);
     }
 }
 

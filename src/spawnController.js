@@ -1,3 +1,5 @@
+var strategyController = require('strategyController');
+
 /*
  * Module code goes here. Use 'module.exports' to export things:
  * module.exports.thing = 'a thing';
@@ -89,7 +91,39 @@ var spawnController = {
         distributor: {
             name: 'distributor',
             minimumCount: function(spawn) { return spawn.room.memory.minerPositions ? 1 : 0},
-            template: 'transporter'
+            template: 'transporter',
+            memory: function(spawn) {
+                var storage = strategyController.findMyStructuresInRoom(
+                    spawn.room,
+                    { filter: s => s.structureType == STRUCTURE_STORAGE }
+                );
+                // If there is a storage use that, otherwise use the spawn as the storage destination
+                storage = storage.length > 0 ? storage[0].id : spawn.id;
+
+                // Get storages with more than 50k energy from all other rooms if within 100 squares of the spawn
+                var collectionEnergyThreshold = 50000;
+                var collectionRange = 100;
+                var collectionPoints = [];
+                for (var roomKey in Game.rooms) {
+                    if (roomKey == spawn.room.name) {
+                        continue;
+                    }
+
+                    var roomStorage = strategyController.findMyStructuresInRoom(
+                        Game.rooms[roomKey],
+                        {
+                            filter: s => s.structureType == STRUCTURE_STORAGE &&
+                                         s.store.energy > collectionEnergyThreshold &&
+                                         s.pos.findPathTo(spawn).length <= collectionRange
+                        }
+                    );
+                    collectionPoints = collectionPoints.concat(roomStorage);
+                }
+
+                // Set distributor's colelction points to the storages within range or the room's collection points
+                collectionPoints = collectionPoints.length > 0 ? collectionPoints : spawn.room.memory.collectionPoints
+                return {collectionPoints: collectionPoints, storage: storage};
+            }
         },
 
         collector: {
@@ -97,7 +131,7 @@ var spawnController = {
             minimumCount: function(spawn) { return spawn.room.memory.collectionPoints ? 1 : 0},
             template: 'transporter',
             memory: function(spawn) {
-                var storage = spawn.room.find(FIND_STRUCTURES, { filter: s => s.structureType == STRUCTURE_STORAGE });
+                var storage = strategyController.findMyStructuresInRoom(spawn.room, { filter: s => s.structureType == STRUCTURE_STORAGE });
                 // If there is a storage use that, otherwise use the spawn as the storage destination
                 storage = storage.length > 0 ? storage[0].id : spawn.id;
                 return {collectionPoints: spawn.room.memory.collectionPoints, storage: storage};
