@@ -93,7 +93,7 @@ var roleBuilder = {
         if (selectionStrategy == this.selectionStrategies.IN_PLACE) {
             targets = creep.pos.findInRange(FIND_CONSTRUCTION_SITES, creep.BUILD_RANGE);
         } else if (selectionStrategy == this.selectionStrategies.IN_ROOM) {
-            // Get build targets from the creep's current rooms
+            // Get build targets from the creep's current room
             targets = creep.room.find(FIND_CONSTRUCTION_SITES);
         } else if (selectionStrategy == this.selectionStrategies.GLOBAL) {
             // Get build targets from all rooms
