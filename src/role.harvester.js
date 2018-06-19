@@ -1,3 +1,5 @@
+var strategyController = require('strategyController');
+
 /*
  * Module code goes here. Use 'module.exports' to export things:
  * module.exports.thing = 'a thing';
@@ -11,12 +13,8 @@ var roleHarvester = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
-        if (creep.memory.role != 'distributor') {
-            var minerIsPresent = creep.room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'miner'}).length > 0;
-            var distributorIsPresent = creep.room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'distributor'}).length > 0;
-            if (minerIsPresent && distributorIsPresent) {
-                return false;
-            }
+        if (!this.shouldHarvest(creep)) {
+            return false;
         }
 
         var target = this.getDeliverTarget(creep);
@@ -81,6 +79,45 @@ var roleHarvester = {
         });
 
         return target;
+    },
+
+    /** @param {Creep} creep **/
+    shouldHarvest: function(creep) {
+        if (creep.memory.role == 'distributor') {
+            return true;
+        }
+
+        var strategicPriority = strategyController.getStrategicPriority(
+            creep.room,
+            strategyController.STRATEGIC_PRIORITIES.HARVEST,
+            this.calculateStrategicPriority
+        );
+
+        return (creep.memory.role == 'harvester' && strategicPriority >= strategyController.STRATEGIC_PRIORITY_MEDIUM) ||
+                strategicPriority >= strategyController.STRATEGIC_PRIORITY_HIGH;
+    },
+
+    /**
+     * Harvest priorities are defined by the following:
+     *   HIGH: hostiles present in room and no miner or distributor
+     *   MEDIUM: hostiles present in room or no miner or distributor
+     *   LOW: no hostiles and miner and distributor
+     * @param {Room} room
+     * @return {integer} priority level of harvesting for the specified room
+     **/
+    calculateStrategicPriority: function(room) {
+        var hostilesInRoom = strategyController.findHostileCreepsInRoom(room).length > 0;
+        var harvestSpecialUnitsInRoom = (
+            strategyController.findMyCreepsInRoom(room, {filter: c => c.memory.role == 'miner'}).length > 0 &&
+            strategyController.findMyCreepsInRoom(room, {filter: c => c.memory.role == 'distributor'}).length > 0
+        );
+
+        if (hostilesInRoom && !harvestSpecialUnitsInRoom) {
+            return strategyController.STRATEGIC_PRIORITY_HIGH;
+        } else if (hostilesInRoom || !harvestSpecialUnitsInRoom) {
+            return strategyController.STRATEGIC_PRIORITY_MEDIUM;
+        }
+        return strategyController.STRATEGIC_PRIORITY_LOW;
     }
 };
 

@@ -13,6 +13,14 @@ var strategyController = (function() {
 
     function createInstance() {
         return {
+            STRATEGIC_PRIORITY_HIGH: 30,
+            STRATEGIC_PRIORITY_MEDIUM: 20,
+            STRATEGIC_PRIORITY_LOW: 10,
+            STRATEGIC_PRIORITY_TTL: 200,
+            STRATEGIC_PRIORITIES: {
+                HARVEST: 'harvest',
+            },
+
             myUsername: 'Ragair',
 
             repairThresholds: {
@@ -103,6 +111,42 @@ var strategyController = (function() {
             },
 
             // Find anything helpers
+            _addFilterPredicate(opts, predicate) {
+                opts = opts || {};
+                if (opts.filter !== undefined) {
+                    var originalFilter = opts.filter;
+                    opts.filter = (x) => originalFilter(x) && predicate(x);
+                } else {
+                    opts.filter = predicate;
+                }
+
+                return opts;
+            },
+
+            // Find anything in room helpers
+            findUnitsInRoom(targetType, room, opts) {
+                return room.find(targetType, opts);
+            },
+
+            findMyUnitsInRoom(targetType, room, opts) {
+                opts = instance._addFilterPredicate(opts, instance.isMine);
+
+                return instance.findUnitsInRoom(targetType, room, opts);
+            },
+
+            findAlliedUnitsInRoom(targetType, room, opts) {
+                opts = instance._addFilterPredicate(opts, instance.isAlly);
+
+                return instance.findUnitsInRoom(targetType, room, opts);
+            },
+
+            findHostileUnitsInRoom(targetType, room, opts) {
+                opts = instance._addFilterPredicate(opts, instance.isHostile);
+
+                return instance.findUnitsInRoom(targetType, room, opts);
+            },
+
+            // Find anything in range helpers
             findUnitsInRange(targetType, source, range, opts) {
                 source = source.pos || source;
 
@@ -114,42 +158,36 @@ var strategyController = (function() {
             },
 
             findMyUnitsInRange(targetType, source, range, opts) {
-                opts = opts || {};
-                if (opts.filter !== undefined) {
-                    var originalFilter = opts.filter;
-                    opts.filter = (x) => originalFilter(x) && instance.isMine(x);
-                } else {
-                    opts.filter = instance.isMine;
-                }
+                opts = instance._addFilterPredicate(opts, instance.isMine);
 
                 return instance.findUnitsInRange(targetType, source, range, opts);
             },
 
             findAlliedUnitsInRange(targetType, source, range, opts) {
-                opts = opts || {};
-                if (opts.filter !== undefined) {
-                    var originalFilter = opts.filter;
-                    opts.filter = (x) => originalFilter(x) && instance.isAllied(x);
-                } else {
-                    opts.filter = instance.isAllied;
-                }
+                opts = instance._addFilterPredicate(opts, instance.isAlly);
 
                 return instance.findUnitsInRange(targetType, source, range, opts);
             },
 
             findHostileUnitsInRange(targetType, source, range, opts) {
-                opts = opts || {};
-                if (opts.filter !== undefined) {
-                    var originalFilter = opts.filter;
-                    opts.filter = (x) => originalFilter(x) && instance.isHostile(x);
-                } else {
-                    opts.filter = instance.isHostile;
-                }
+                opts = instance._addFilterPredicate(opts, instance.isHostile);
 
                 return instance.findUnitsInRange(targetType, source, range, opts);
             },
 
             // Find Creeps
+            findMyCreepsInRoom(room, opts) {
+                return instance.findUnitsInRoom(FIND_MY_CREEPS, room, opts);
+            },
+
+            findHostileCreepsInRoom(room, opts) {
+                return instance.findHostileUnitsInRoom(FIND_HOSTILE_CREEPS, room, opts);
+            },
+
+            findAlliedCreepsInRoom(room, opts) {
+                return instance.findAlliedUnitsInRoom(FIND_HOSTILE_CREEPS, room, opts);
+            },
+
             findMyCreepsInRange(source, range, opts) {
                 return instance.findUnitsInRange(FIND_MY_CREEPS, source, range, opts);
             },
@@ -163,6 +201,18 @@ var strategyController = (function() {
             },
 
             // Find Structures
+            findMyStructuresInRoom(room, opts) {
+                return instance.findUnitsInRoom(FIND_STRUCTURES, room, opts);
+            },
+
+            findHostileStructuresInRoom(room, opts) {
+                return instance.findHostileUnitsInRoom(FIND_HOSTILE_STRUCTURES, room, opts);
+            },
+
+            findAlliedStructuresInRoom(room, opts) {
+                return instance.findAlliedUnitsInRoom(FIND_HOSTILE_STRUCTURES, room, opts);
+            },
+
             findMyStructuresInRange(source, range, opts) {
                 return instance.findMyUnitsInRange(FIND_STRUCTURES, source, range, opts);
             },
@@ -173,7 +223,21 @@ var strategyController = (function() {
 
             findAlliedStructuresInRange(source, range, opts) {
                 return instance.findAlliedUnitsInRange(FIND_HOSTILE_STRUCTURES, source, range, opts);
-            }
+            },
+
+            // Strategic State Helpers
+            getStrategicPriority(room, name, doCalculation) {
+                var strategicPriorities = room.memory.strategicPriorities || {};
+                strategicPriorities[name] = strategicPriorities[name] || { value: undefined, expiresAfterTick: -1 };
+
+                if (strategicPriorities[name].expiresAfterTick < Game.time) {
+                    strategicPriorities[name].value = doCalculation(room);
+                    strategicPriorities[name].expiresAfterTick = Game.time + instance.STRATEGIC_PRIORITY_TTL;
+                    room.memory.strategicPriorities = strategicPriorities;
+                }
+
+                return strategicPriorities[name].value
+            },
         };
     };
 
